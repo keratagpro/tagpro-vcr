@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>TagPro VCR</title>
+
+	<style>
+		.hidden {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="root"></div>
+
+	<div id="textures" class="hidden">
+		""
+	</div>
+
+	<canvas id="viewport" width="1280" height="800"></canvas>
+
+	<div id="chatHistory">
+	</div>
+
+	<div id="assets" style="visibility: hidden">
+		<img id="tiles" src="/textures/musclescupgradients/tiles.png" class="asset">
+		<img id="splats" src="/textures/musclescupgradients/splats.png" class="asset">
+		<img id="flair" src="/images/flair.png" class="asset">
+		<img id="speedpad" src="/textures/musclescupgradients/speedpad.png" class="asset">
+		<img id="speedpadred" src="/textures/musclescupgradients/speedpadred.png" class="asset">
+		<img id="speedpadblue" src="/textures/musclescupgradients/speedpadblue.png" class="asset">
+		<img id="portal" src="/textures/musclescupgradients/portal.png" class="asset">
+		<img id="particle" src="/textures/classic/particle.png" class="asset">
+		<img id="particleFire" src="/textures/classic/particle-fire.png" class="asset">
+		<img id="gravityWell" src="/textures/classic/gravitywell.png" class="asset">
+	</div>
+
+	<script src="./vendor/global-game.js"></script>
+	<script>
+		tagproConfig.serverHost = location.hostname;
+	</script>
+	<script>
+		tagpro.ready(function () {
+			tagpro.spectator = true;
+		});
+	</script>
+
+	<script src="vendors~main.js"></script>
+	<script src="game.js"></script>
+</body>
+
+</html>

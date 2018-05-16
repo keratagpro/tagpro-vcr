@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "scripts": {
+    "clean": "rimraf docs/**/*",
+    "prebuild": "npm run clean",
+    "build": "lerna run --parallel build",
+    "prewatch": "npm run clean",
+    "watch": "lerna run --parallel watch"
+  },
+  "devDependencies": {
+    "lerna": "^2.11.0",
+    "rimraf": "^2.6.2"
+  }
+}
