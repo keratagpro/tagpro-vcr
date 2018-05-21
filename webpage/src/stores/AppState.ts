@@ -8,10 +8,12 @@ export class AppState {
 
 	@observable recording = localStorage.getItem('recording');
 	@observable recordingName = localStorage.getItem('recordingName');
+	@observable recordingURL = '';
 
 	@observable selectedFile: File = undefined;
 	@observable started = false;
-	@observable infoShown = !localStorage.getItem('recordingName');
+	@observable fetching = false;
+	@observable urlIsValid = undefined;
 
 	constructor() {
 		const channel = (this.channel = new EventedChannel('vcr'));
@@ -40,13 +42,56 @@ export class AppState {
 			}
 		);
 
+		reaction(
+			() => this.recordingURL,
+			url => {
+				if (!this.recordingURL) {
+					return;
+				}
+
+				this.fetching = true;
+
+				fetch(url)
+					.then(r => {
+						if (!r.ok) {
+							throw r;
+						} else {
+							return r.text();
+						}
+					})
+					.then(text => {
+						this.recording = text;
+						this.fetching = false;
+						this.urlIsValid = true;
+					})
+					.catch(err => {
+						this.recording = undefined;
+						this.fetching = false;
+						this.urlIsValid = false;
+					});
+			},
+			{
+				delay: 1000
+			}
+		);
+
 		reaction(() => this.recording, localStore(this, 'recording'));
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
 	}
 
 	@action.bound
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
+		this.recordingURL = '';
 		this.selectedFile = ev.target.files[0];
+	}
+
+	@action.bound
+	handleUrlChange(ev: React.ChangeEvent<HTMLInputElement>) {
+		this.recordingURL = ev.target.value;
+		this.selectedFile = undefined;
+
+		this.urlIsValid = undefined;
+		this.fetching = false;
 	}
 
 	@action.bound
@@ -61,16 +106,6 @@ export class AppState {
 	@action.bound
 	handleStop() {
 		this.started = false;
-	}
-
-	@action.bound
-	showInfo() {
-		this.infoShown = true;
-	}
-
-	@action.bound
-	hideInfo() {
-		this.infoShown = false;
 	}
 }
 

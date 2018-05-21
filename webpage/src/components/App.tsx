@@ -56,7 +56,7 @@ export class App extends React.Component<IProps> {
 	renderUploadLabel(label?: string) {
 		return (
 			<label htmlFor="file" className="btn btn-link">
-				<i className="icon icon-upload" /> {label || 'Select recording...'}
+				<i className="icon icon-upload" /> {label || 'Upload recording'}
 			</label>
 		);
 	}
@@ -92,6 +92,12 @@ export class App extends React.Component<IProps> {
 	render() {
 		const { appState } = this.props;
 
+		const fetchClasses = classnames('form-icon', 'icon', {
+			'loading': appState.fetching,
+			'icon-check': appState.recordingURL && !appState.fetching && appState.urlIsValid === true,
+			'icon-stop': appState.recordingURL && appState.urlIsValid === false
+		});
+
 		return (
 			<div id="container">
 				<header id="header" className="navbar">
@@ -99,9 +105,19 @@ export class App extends React.Component<IProps> {
 						<span>TagPro VCR</span>
 					</section>
 					<section className="navbar-center">
-						<div className="form-group">
-							<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />
-							{this.renderUploadLabel(appState.recordingName)} {this.renderStartButton()}{' '}
+						<div className="form-horizontal">
+							{this.renderUploadLabel(appState.recordingName)}
+
+							<span> or </span>
+
+							<div className={classnames('input-group input-inline', { 'has-icon-right': !!appState.recordingURL })}>
+								<input className="form-input" type="text" value={appState.recordingURL} onChange={appState.handleUrlChange} placeholder="Fetch from URL (http://...)" />
+								{appState.recordingURL && <i className={fetchClasses} />}
+							</div>
+							<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />{' '}
+
+							{this.renderStartButton()}{' '}
+
 							{this.renderStopButton()}
 						</div>
 					</section>
