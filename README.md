@@ -19,3 +19,11 @@ For example, this is an event for playing the burst sound at 14.52s:
 ```
 
 The VCR webpage runs the original game client code (`global-game.js`), but replaces the socket.io library with a "fake socket" that replays the recorded events.
+
+## Development
+
+*   Install lerna globally: `npm install --global lerna`
+*   Run `lerna bootstrap` (runs `npm install` in sub-packages)
+*   Run `lerna run build` (runs `npm run build` in sub-packages)
+
+To automatically recompile when source files change, `cd` to sub-package directories and run `npm run watch`.
