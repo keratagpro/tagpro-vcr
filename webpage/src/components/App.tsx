@@ -47,6 +47,11 @@ export class App extends React.Component<IProps> {
 							To test your TagPro userscripts here, add this @include:<br />
 							<code>// @include https://keratagpro.github.io/tagpro-vcr/game.html</code>
 						</li>
+						<li>
+							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
+							<code>+</code>/<code>-</code> to zoom in/out etc.
+							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
+						</li>
 					</ul>
 				</div>
 			</div>
