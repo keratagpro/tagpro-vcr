@@ -22,37 +22,32 @@ export default class PacketDataPlayer {
 	}
 
 	seek(to: number) {
-		this.startedAt = now() - to;
-		this.currentIndex = this.packets.findIndex(([ts]) => ts > to);
-		this.scheduledPacket = this.packets[this.currentIndex];
-	}
-
-	advance(to: number) {
-		const index = this.packets.findIndex(([ts]) => ts < to);
-
-		while (this.scheduledPacket) {
-			const packet = this.packets[this.currentIndex++];
-			this.scheduledPacket = packet;
-
-			if (packet[0] > to) {
-				break;
-			}
-
-			this.callback(packet[0], packet[1], packet[2]);
-		}
-	}
-
-	fastForward(to: number, from = 0) {
-		let index = to < from ? 0 : this.packets.findIndex(([ts]) => ts >= from && ts < to);
+		let index = this.packets.findIndex(([ts]) => ts < to);
 		let packet = this.packets[index];
+
+		let event = { ts: 0, time: 0, state: 0 };
 
 		while (packet) {
 			packet = this.packets[++index];
 
 			this.currentTime = packet[0];
 
+			if (packet[1] == "time") {
+				event.ts = packet[0];
+				event.time = packet[2].time;
+				event.state = packet[2].state;
+			}
+
 			if (packet[0] > to) {
+				let offset = packet[0] - event.ts;
+				let newtime = event.state == 5 ? event.time + offset : event.time - offset;
+
+				this.callback(packet[0], "time", { time: newtime, state: event.state, restore: true });
+
+				this.startedAt = now() - packet[0];
+				this.currentIndex = index;
 				this.scheduledPacket = packet;
+
 				break;
 			}
 
@@ -91,6 +86,14 @@ export default class PacketDataPlayer {
 
 		if (this.currentTime < packet[0]) {
 			return;
+		}
+
+		if (packet[1] == "connect") {
+			let index = this.packets.findIndex(p => p[1] == "end");
+			let endPacket = this.packets[index];
+
+			packet[2] = packet[2] || {};
+			packet[2].duration = endPacket[0];
 		}
 
 		this.callback(packet[0], packet[1], packet[2]);

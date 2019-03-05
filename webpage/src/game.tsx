@@ -21,15 +21,32 @@ const io = {
 			player.play();
 		});
 
-		// window['seek'] = function(to: number) {
-		// 	const players = window.tagpro.players;
-		// 	for (const id in players) {
-		// 		if (players.hasOwnProperty(id)) {
-		// 			players[id].lastSync = {};
-		// 		}
-		// 	}
-		// 	player.seek(to);
-		// };
+		window['seek'] = function(to: number) {
+			player.pause();
+
+			window['restore_sound'] = window.tagpro.sound;
+			window.tagpro.sound = false;
+
+			window.tagpro.gameEndsAt = null;
+			window.tagpro.overtimeStartedAt = null;
+
+			const players = window.tagpro.players;
+			for (const id in players) {
+				if (players.hasOwnProperty(id)) {
+					players[id].lastSync = {};
+					if (Number(id) != window.tagpro.playerId) {
+						player.emit("playerLeft", id);
+					}
+				}
+			}
+
+			for (var i = 0; i < 10; i++) {
+				player.emit("chat", { from: null, to: "all", message: "\xa0" });
+			}
+
+			player.seek(to);
+			player.play();
+		};
 
 		return socket;
 	}

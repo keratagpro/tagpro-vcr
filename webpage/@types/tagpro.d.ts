@@ -48,6 +48,7 @@ declare class TagPro {
 	chat: TagPro.Chat;
 	fps: number;
 	gameEndsAt: Date;
+	overtimeStartedAt: Date;
 	group: TagPro.Group;
 	kick: TagPro.Kick;
 	musicPlayer: TagPro.MusicPlayer;

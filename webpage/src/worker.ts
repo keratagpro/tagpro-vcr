@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3';
 
 import PacketDataPlayer from './utils/PacketDataPlayer';
 
-const worker = self as DedicatedWorkerGlobalScope;
+const worker = self as any as DedicatedWorkerGlobalScope;
 const events = new EventEmitter();
 
 worker.addEventListener('message', function(ev) {
@@ -42,7 +42,7 @@ events.on('pause', function() {
 
 events.on('seek', function(to: number) {
 	if (player) {
-		player.fastForward(to);
+		player.seek(to);
 	}
 });
 
