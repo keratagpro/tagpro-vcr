@@ -3,6 +3,7 @@
   "scripts": {
     "clean": "rimraf docs/**/*",
     "prebuild": "npm run clean",
+    "build:dev": "lerna run --parallel build:dev",
     "build": "lerna run --parallel build",
     "prewatch": "npm run clean",
     "watch": "lerna run --parallel watch"

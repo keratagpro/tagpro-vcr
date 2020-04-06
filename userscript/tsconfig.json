@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "build",
+		"rootDir": "src",
 		"sourceMap": true,
 		"noImplicitAny": false,
 		"moduleResolution": "node",
@@ -9,6 +9,7 @@
 		"allowJs": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
+		"noEmit": true,
 		"lib": ["es2017", "dom", "webworker"]
 	},
 	"include": ["@types/**/*", "./src/**/*"]

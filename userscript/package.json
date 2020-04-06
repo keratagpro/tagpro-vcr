@@ -5,10 +5,15 @@
   "scripts": {
     "start": "npm run watch",
     "prebuild": "rimraf build",
+    "build:dev": "rollup --config",
     "build": "rollup --config",
     "watch": "rollup --config --watch"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-replace": "^2.3.1",
+    "@rollup/plugin-typescript": "^4.0.0",
     "@types/classnames": "^2.2.10",
     "@types/debug": "4.1.5",
     "@types/greasemonkey": "4.0.0",
@@ -20,11 +25,8 @@
     "lodash.template": "^4.5.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.3.3",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postcss": "^2.5.0",
-    "rollup-plugin-replace": "^2.2.0",
-    "rollup-typescript": "^1.2.1",
+    "tslib": "^1.11.1",
     "typescript": "^3.8.3"
   }
 }
