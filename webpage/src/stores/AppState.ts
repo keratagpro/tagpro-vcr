@@ -120,10 +120,10 @@ function localStore<T>(target: T, key: keyof T) {
 	return function () {
 		if (target[key]) {
 			// console.log('setting', key);
-			localStorage.setItem(key, String(target[key]));
+			localStorage.setItem(key as string, String(target[key]));
 		} else {
 			// console.log('removing', key);
-			localStorage.removeItem(key);
+			localStorage.removeItem(key as string);
 		}
 	};
 }
