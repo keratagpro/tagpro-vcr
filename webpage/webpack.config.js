@@ -37,7 +37,7 @@ const configMain = {
 	resolve,
 	module: modules,
 	optimization,
-	plugins: [new CopyPlugin([{ from: 'src/assets' }])],
+	plugins: [new CopyPlugin([{ from: 'assets' }])],
 };
 
 /** @type {webpack.Configuration} */
