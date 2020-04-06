@@ -28,7 +28,7 @@ const optimization = {
 
 /** @type {webpack.Configuration} */
 const configMain = {
-	mode: 'development',
+	devtool: 'cheap-source-map',
 	entry: {
 		main: './src/index.tsx',
 		game: './src/game.tsx',
@@ -42,7 +42,7 @@ const configMain = {
 
 /** @type {webpack.Configuration} */
 const configWorker = {
-	mode: 'development',
+	devtool: 'cheap-source-map',
 	entry: {
 		worker: './src/worker.ts',
 	},

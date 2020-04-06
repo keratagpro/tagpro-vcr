@@ -16,11 +16,11 @@
 // @require       https://wzrd.in/standalone/debug@latest
 // ==/UserScript==
 
-(function (createDebug,tagpro) {
+(function (createDebug, tagpro) {
 	'use strict';
 
-	createDebug = createDebug && createDebug.hasOwnProperty('default') ? createDebug['default'] : createDebug;
-	tagpro = tagpro && tagpro.hasOwnProperty('default') ? tagpro['default'] : tagpro;
+	createDebug = createDebug && Object.prototype.hasOwnProperty.call(createDebug, 'default') ? createDebug['default'] : createDebug;
+	tagpro = tagpro && Object.prototype.hasOwnProperty.call(tagpro, 'default') ? tagpro['default'] : tagpro;
 
 	const now = () => Date.now();
 	function addPacketListeners(socket, events, onPacket) {
@@ -79,14 +79,14 @@
 	    }
 	}
 
-	function isInGame(tagpro$$1) {
-	    return tagpro$$1.state > 0;
+	function isInGame(tagpro) {
+	    return tagpro.state > 0;
 	}
 	function isFrontPage() {
 	    return !!document.querySelector('#userscript-home');
 	}
-	function readyAsync(tagpro$$1) {
-	    return new Promise(resolve => tagpro$$1.ready(resolve));
+	function readyAsync(tagpro) {
+	    return new Promise((resolve) => tagpro.ready(resolve));
 	}
 
 	const debug = createDebug('vcr');
@@ -111,11 +111,11 @@
 	        server: location.hostname,
 	        port: location.port,
 	        time: Date.now(),
-	        tagproVersion: tp.version
+	        tagproVersion: tp.version,
 	    };
 	    recorder.record(now(), 'recorder-metadata', metadata);
 	    // NOTE: removing $ prefix.
-	    const events = Object.keys(tp.rawSocket['_callbacks']).map(e => (e.startsWith('$') ? e.substr(1) : e));
+	    const events = Object.keys(tp.rawSocket['_callbacks']).map((e) => (e.startsWith('$') ? e.substr(1) : e));
 	    const listeners = addPacketListeners(tp.rawSocket, events, recorder.record.bind(recorder));
 	    window.addEventListener('beforeunload', async function (ev) {
 	        listeners.cancel();
@@ -124,4 +124,4 @@
 	    });
 	}
 
-}(debug,tagpro));
+}(debug, tagpro));
