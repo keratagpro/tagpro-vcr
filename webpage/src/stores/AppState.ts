@@ -24,7 +24,7 @@ export class AppState {
 
 		reaction(
 			() => this.selectedFile,
-			file => {
+			(file) => {
 				if (!file) {
 					this.recordingName = undefined;
 					this.recording = undefined;
@@ -35,7 +35,7 @@ export class AppState {
 
 				reader.addEventListener('load', () => {
 					this.recordingName = file.name;
-					this.recording = reader.result;
+					this.recording = reader.result as string;
 				});
 
 				reader.readAsText(file);
@@ -44,7 +44,7 @@ export class AppState {
 
 		reaction(
 			() => this.recordingURL,
-			url => {
+			(url) => {
 				if (!this.recordingURL) {
 					return;
 				}
@@ -52,26 +52,26 @@ export class AppState {
 				this.fetching = true;
 
 				fetch(url)
-					.then(r => {
+					.then((r) => {
 						if (!r.ok) {
 							throw r;
 						} else {
 							return r.text();
 						}
 					})
-					.then(text => {
+					.then((text) => {
 						this.recording = text;
 						this.fetching = false;
 						this.urlIsValid = true;
 					})
-					.catch(err => {
+					.catch((err) => {
 						this.recording = undefined;
 						this.fetching = false;
 						this.urlIsValid = false;
 					});
 			},
 			{
-				delay: 1000
+				delay: 1000,
 			}
 		);
 
@@ -112,12 +112,12 @@ export class AppState {
 function parseRecording(data: string) {
 	return data
 		.split('\n')
-		.filter(l => l.trim().length > 0)
-		.map(line => JSON.parse(line));
+		.filter((l) => l.trim().length > 0)
+		.map((line) => JSON.parse(line));
 }
 
 function localStore<T>(target: T, key: keyof T) {
-	return function() {
+	return function () {
 		if (target[key]) {
 			// console.log('setting', key);
 			localStorage.setItem(key, String(target[key]));

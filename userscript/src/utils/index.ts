@@ -6,7 +6,7 @@ export function addPacketListeners(socket: SocketIO.Socket, events: string[], on
 	const packetListeners = new Map<string, (...args: any[]) => void>();
 
 	for (const type of events) {
-		const cb = function(data?: any) {
+		const cb = function (data?: any) {
 			onPacket(now(), type, data);
 		};
 

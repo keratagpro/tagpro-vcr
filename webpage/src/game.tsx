@@ -16,7 +16,7 @@ const io = {
 		const channel = new EventedChannel('vcr');
 		channel.emit('request-recording');
 
-		channel.on('recording', data => {
+		channel.on('recording', (data) => {
 			player.load(data);
 			player.play();
 		});
@@ -32,7 +32,7 @@ const io = {
 		// };
 
 		return socket;
-	}
+	},
 };
 
 window['io'] = io;

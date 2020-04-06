@@ -1,8 +1,7 @@
 import BackgroundPlayer from './BackgroundPlayer';
 
 export default class FakeSocket {
-	constructor(public player: BackgroundPlayer) {
-	}
+	constructor(public player: BackgroundPlayer) {}
 
 	on(type, listener) {
 		this.player.on(type, listener);
@@ -21,9 +20,9 @@ export default class FakeSocket {
 		return {
 			engine: {
 				transport: {
-					polling: false
-				}
-			}
+					polling: false,
+				},
+			},
 		};
 	}
 }

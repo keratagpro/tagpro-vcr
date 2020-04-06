@@ -296,7 +296,7 @@ declare namespace TagPro {
 	enum State {
 		Active = 1,
 		Ended = 2,
-		NotStarted = 3
+		NotStarted = 3,
 	}
 
 	interface Tiles extends Array<any> {

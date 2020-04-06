@@ -1,5 +1,5 @@
 export function getTagPro() {
-	return new Promise<TagPro>(function(resolve) {
+	return new Promise<TagPro>(function (resolve) {
 		waitForTagPro(resolve);
 	});
 }
@@ -8,7 +8,7 @@ function waitForTagPro(cb: (tp: TagPro) => void) {
 	if (typeof window.tagpro !== 'undefined') {
 		cb(window.tagpro);
 	} else {
-		setTimeout(function() {
+		setTimeout(function () {
 			waitForTagPro(cb);
 		}, 100);
 	}

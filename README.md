@@ -22,8 +22,8 @@ The VCR webpage runs the original game client code (`global-game.js`), but repla
 
 ## Development
 
-*   Install lerna globally: `npm install --global lerna`
-*   Run `lerna bootstrap` (runs `npm install` in sub-packages)
-*   Run `lerna run build` (runs `npm run build` in sub-packages)
+-   Install lerna globally: `npm install --global lerna`
+-   Run `lerna bootstrap` (runs `npm install` in sub-packages)
+-   Run `lerna run build` (runs `npm run build` in sub-packages)
 
 To automatically recompile when source files change, `cd` to sub-package directories and run `npm run watch`.

@@ -7,7 +7,7 @@ interface IProps {
 	onClose: () => void;
 }
 
-export const Modal: React.SFC<IProps> = function(props) {
+export const Modal: React.SFC<IProps> = function (props) {
 	return (
 		<div className={classnames('modal', { active: !props.hidden })}>
 			<a href="#close" className="modal-overlay" onClick={props.onClose} />

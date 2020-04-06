@@ -44,13 +44,14 @@ export class App extends React.Component<IProps> {
 					<h6>Notes</h6>
 					<ul>
 						<li>
-							To test your TagPro userscripts here, add this @include:<br />
+							To test your TagPro userscripts here, add this @include:
+							<br />
 							<code>// @include https://keratagpro.github.io/tagpro-vcr/game.html</code>
 						</li>
 						<li>
 							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
-							<code>+</code>/<code>-</code> to zoom in/out etc.
-							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
+							<code>+</code>/<code>-</code> to zoom in/out etc. (see{' '}
+							<a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
 						</li>
 					</ul>
 				</div>
@@ -72,7 +73,7 @@ export class App extends React.Component<IProps> {
 		return (
 			<button
 				className={classnames('btn btn-success', {
-					disabled: appState.started || !appState.recording
+					disabled: appState.started || !appState.recording,
 				})}
 				onClick={appState.handleStart}
 			>
@@ -98,9 +99,9 @@ export class App extends React.Component<IProps> {
 		const { appState } = this.props;
 
 		const fetchClasses = classnames('form-icon', 'icon', {
-			'loading': appState.fetching,
+			loading: appState.fetching,
 			'icon-check': appState.recordingURL && !appState.fetching && appState.urlIsValid === true,
-			'icon-stop': appState.recordingURL && appState.urlIsValid === false
+			'icon-stop': appState.recordingURL && appState.urlIsValid === false,
 		});
 
 		return (
@@ -112,18 +113,23 @@ export class App extends React.Component<IProps> {
 					<section className="navbar-center">
 						<div className="form-horizontal">
 							{this.renderUploadLabel(appState.recordingName)}
-
 							<span> or </span>
-
-							<div className={classnames('input-group input-inline', { 'has-icon-right': !!appState.recordingURL })}>
-								<input className="form-input" type="text" value={appState.recordingURL} onChange={appState.handleUrlChange} placeholder="Fetch from URL (http://...)" />
+							<div
+								className={classnames('input-group input-inline', {
+									'has-icon-right': !!appState.recordingURL,
+								})}
+							>
+								<input
+									className="form-input"
+									type="text"
+									value={appState.recordingURL}
+									onChange={appState.handleUrlChange}
+									placeholder="Fetch from URL (http://...)"
+								/>
 								{appState.recordingURL && <i className={fetchClasses} />}
 							</div>
 							<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />{' '}
-
-							{this.renderStartButton()}{' '}
-
-							{this.renderStopButton()}
+							{this.renderStartButton()} {this.renderStopButton()}
 						</div>
 					</section>
 					<section className="navbar-section">

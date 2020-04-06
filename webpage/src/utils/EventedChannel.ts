@@ -8,7 +8,7 @@ export default class EventedChannel extends BroadcastChannel {
 
 		const events = (this.events = new EventEmitter());
 
-		this.addEventListener('message', ev => {
+		this.addEventListener('message', (ev) => {
 			const [type, ...args] = ev.data;
 			events.emit(type, ...args);
 		});
