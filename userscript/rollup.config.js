@@ -8,6 +8,9 @@ import postcss from 'rollup-plugin-postcss';
 
 const { version } = require('./package.json');
 
+const VCR_URL = 'https://keratagpro.github.io/tagpro-vcr';
+// const VCR_URL = 'http://localhost:8080';
+
 const plugins = [
 	typescript(),
 	resolve({ browser: true }),
@@ -15,17 +18,17 @@ const plugins = [
 	postcss({
 		inject: false,
 	}),
-	replace({
-		VCR_URL: 'https://keratagpro.github.io/tagpro-vcr/',
-		// VCR_URL: 'http://localhost:8080/'
-	}),
+	replace({ VCR_URL }),
 ];
 
 if (!fs.existsSync('../docs')) {
 	fs.mkdirSync('../docs');
 }
 
-const meta = renderTemplate('src/templates/meta.tpl.js', { version });
+const meta = renderTemplate('src/templates/meta.tpl.js', {
+	version,
+	VCR_URL,
+});
 fs.writeFileSync('../docs/tagpro-vcr.meta.js', meta, 'utf8');
 
 const globals = {

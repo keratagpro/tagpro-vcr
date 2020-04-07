@@ -2,9 +2,9 @@
   "name": "tagpro-vcr-webpage",
   "version": "0.0.1",
   "scripts": {
-    "start": "npm run watch",
-    "build:dev": "webpack --mode=development",
+    "start": "webpack-dev-server --mode=development --open",
     "build": "webpack --mode=production",
+    "build:dev": "webpack --mode=development",
     "watch": "webpack --watch"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@types/react": "^16.9.32",
     "@types/react-dom": "^16.9.6",
     "@types/webpack": "^4.41.10",
+    "@types/webpack-dev-server": "^3.10.1",
     "copy-webpack-plugin": "^5.1.1",
     "copyfiles": "^2.2.0",
     "css-loader": "^3.5.0",
@@ -29,6 +30,7 @@
     "ts-loader": "^6.2.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }

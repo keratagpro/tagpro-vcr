@@ -3,10 +3,10 @@
 // @description   Record TagPro socket data
 // @version       ${version}
 // @author        Kera
-// @icon          https://keratagpro.github.io/tagpro-vcr/images/vhs.png
+// @icon          ${VCR_URL}/images/vhs.png
 // @namespace     https://github.com/keratagpro/
-// @downloadUrl   https://keratagpro.github.io/tagpro-vcr/tagpro-vcr.user.js
-// @updateUrl     https://keratagpro.github.io/tagpro-vcr/tagpro-vcr.meta.js
+// @downloadUrl   ${VCR_URL}/tagpro-vcr.user.js
+// @updateUrl     ${VCR_URL}/tagpro-vcr.meta.js
 // @include       http://tagpro-*.koalabeast.com:*
 // @include       http://tagpro-*.koalabeast.com/*
 // @grant         GM_getValue

@@ -1,4 +1,4 @@
-import EventEmitter, { ListenerFn } from 'eventemitter3';
+import * as EventEmitter from 'eventemitter3';
 
 export default class EventedChannel extends BroadcastChannel {
 	events: EventEmitter;
@@ -14,7 +14,7 @@ export default class EventedChannel extends BroadcastChannel {
 		});
 	}
 
-	on(event: string, listener: ListenerFn) {
+	on(event: string, listener: EventEmitter.ListenerFn) {
 		this.events.on(event, listener);
 	}
 

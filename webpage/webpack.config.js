@@ -1,54 +1,53 @@
+// @ts-check
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const output = {
-	path: path.resolve(__dirname, '../docs'),
-};
+const VCR_URL = 'https://keratagpro.github.io/tagpro-vcr';
+// const VCR_URL = 'http://localhost:8080';
 
-const resolve = {
-	extensions: ['.ts', '.tsx', '.js', '.json'],
-};
-
-const modules = {
-	rules: [
-		{ test: /\.tsx?$/, loader: 'ts-loader' },
-		{
-			test: /\.css$/,
-			use: ['style-loader', 'css-loader'],
-		},
-	],
-};
-
-const optimization = {
-	splitChunks: {
-		chunks: 'all',
+/** @type {webpack.Configuration} */
+const common = {
+	devtool: 'cheap-source-map',
+	output: {
+		path: path.resolve(__dirname, '../docs'),
 	},
+	resolve: {
+		extensions: ['.ts', '.tsx', '.js', '.json'],
+	},
+	module: {
+		rules: [{ test: /\.tsx?$/, loader: 'ts-loader' }],
+	},
+	node: false,
 };
 
 /** @type {webpack.Configuration} */
 const configMain = {
-	devtool: 'cheap-source-map',
+	...common,
 	entry: {
 		main: './src/index.tsx',
 		game: './src/game.tsx',
 	},
-	output,
-	resolve,
-	module: modules,
-	optimization,
-	plugins: [new CopyPlugin([{ from: 'assets' }])],
+	optimization: {
+		runtimeChunk: 'single',
+		splitChunks: {
+			chunks: 'all',
+		},
+	},
+	plugins: [new webpack.EnvironmentPlugin({ VCR_URL }), new CopyPlugin([{ from: 'assets' }])],
+	devServer: {
+		contentBase: path.join(__dirname, '../docs'),
+		compress: true,
+		port: 4040,
+	},
 };
 
 /** @type {webpack.Configuration} */
 const configWorker = {
-	devtool: 'cheap-source-map',
+	...common,
 	entry: {
 		worker: './src/worker.ts',
 	},
-	output,
-	resolve,
-	module: modules,
 	target: 'webworker',
 };
 

@@ -1,6 +1,6 @@
 declare var self: DedicatedWorkerGlobalScope;
 
-import EventEmitter from 'eventemitter3';
+import * as EventEmitter from 'eventemitter3';
 
 import PacketDataPlayer from './utils/PacketDataPlayer';
 

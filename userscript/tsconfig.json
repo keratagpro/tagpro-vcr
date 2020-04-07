@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"rootDir": "src",
-		"sourceMap": true,
+		"sourceMap": false,
 		"noImplicitAny": false,
 		"moduleResolution": "node",
 		"target": "es2017",

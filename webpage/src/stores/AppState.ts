@@ -1,9 +1,8 @@
-import { action, computed, extendObservable, observable, observe, reaction } from 'mobx';
+import { action, computed, observable, reaction } from 'mobx';
 
-import { equals } from '../utils';
 import EventedChannel from '../utils/EventedChannel';
 
-export class AppState {
+export default class AppState {
 	channel: EventedChannel;
 
 	@observable recording = localStorage.getItem('recording');
@@ -13,10 +12,11 @@ export class AppState {
 	@observable selectedFile: File = undefined;
 	@observable started = false;
 	@observable fetching = false;
-	@observable urlIsValid = undefined;
+	@observable urlIsValid?: boolean = undefined;
 
 	constructor() {
-		const channel = (this.channel = new EventedChannel('vcr'));
+		const channel = new EventedChannel('vcr');
+		this.channel = channel;
 
 		channel.on('request-recording', () => {
 			channel.emit('recording', parseRecording(this.recording));
@@ -77,6 +77,21 @@ export class AppState {
 
 		reaction(() => this.recording, localStore(this, 'recording'));
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
+	}
+
+	@computed
+	get fetchIcon() {
+		if (!this.recordingURL) {
+			return null;
+		}
+
+		if (this.fetching) {
+			return '🔎';
+		} else if (!this.fetching && this.urlIsValid) {
+			return '✔️';
+		} else if (this.urlIsValid === false) {
+			return '❌';
+		}
 	}
 
 	@action.bound
