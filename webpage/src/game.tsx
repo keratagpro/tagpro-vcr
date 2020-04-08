@@ -1,6 +1,11 @@
 import BackgroundPlayer from './utils/BackgroundPlayer';
 import EventedChannel from './utils/EventedChannel';
 import FakeSocket from './utils/FakeSocket';
+import { render } from 'react-dom';
+import GameState from './stores/GameState';
+import * as React from 'react';
+import GameContext from './stores/GameContext';
+import Recorder from './components/Recorder';
 
 const io = {
 	connect() {
@@ -39,3 +44,12 @@ window['io'] = io;
 
 // NOTE: Testing.
 // io.connect();
+
+const gameState = new GameState();
+
+render(
+	<GameContext.Provider value={gameState}>
+		<Recorder />
+	</GameContext.Provider>,
+	document.getElementById('root')
+);
