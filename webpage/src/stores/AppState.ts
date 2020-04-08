@@ -2,6 +2,8 @@ import { action, computed, observable, reaction } from 'mobx';
 
 import EventedChannel from '../utils/EventedChannel';
 
+const VCR_URL = process.env.VCR_URL;
+
 export default class AppState {
 	channel: EventedChannel;
 
@@ -12,6 +14,7 @@ export default class AppState {
 	@observable selectedFile: File = undefined;
 	@observable started = false;
 	@observable fetching = false;
+	@observable urlExists?: boolean = undefined;
 	@observable urlIsValid?: boolean = undefined;
 
 	constructor() {
@@ -50,6 +53,7 @@ export default class AppState {
 				}
 
 				this.fetching = true;
+				this.urlExists = undefined;
 
 				fetch(url)
 					.then((r) => {
@@ -60,13 +64,21 @@ export default class AppState {
 						}
 					})
 					.then((text) => {
-						this.recording = text;
 						this.fetching = false;
-						this.urlIsValid = true;
+						this.urlExists = true;
+
+						if (text.startsWith('[0,"recorder-metadata"')) {
+							this.recording = text;
+							this.urlIsValid = true;
+						} else {
+							this.recording = undefined;
+							this.urlIsValid = false;
+						}
 					})
 					.catch((err) => {
 						this.recording = undefined;
 						this.fetching = false;
+						this.urlExists = false;
 						this.urlIsValid = false;
 					});
 			},
@@ -80,6 +92,23 @@ export default class AppState {
 	}
 
 	@computed
+	get fetchTitle() {
+		if (!this.recordingURL) {
+			return null;
+		}
+
+		if (this.fetching) {
+			return 'Fetching';
+		} else if (!this.fetching && this.urlIsValid) {
+			return 'Recording fetched';
+		} else if (this.urlExists === false) {
+			return 'URL not found';
+		} else if (this.urlIsValid === false) {
+			return 'URL is not a valid recording';
+		}
+	}
+
+	@computed
 	get fetchIcon() {
 		if (!this.recordingURL) {
 			return null;
@@ -89,8 +118,10 @@ export default class AppState {
 			return '🔎';
 		} else if (!this.fetching && this.urlIsValid) {
 			return '✔️';
-		} else if (this.urlIsValid === false) {
+		} else if (this.urlExists === false) {
 			return '❌';
+		} else if (this.urlIsValid === false) {
+			return '⚠️';
 		}
 	}
 
@@ -105,6 +136,7 @@ export default class AppState {
 		this.recordingURL = ev.target.value;
 		this.selectedFile = undefined;
 
+		this.urlExists = undefined;
 		this.urlIsValid = undefined;
 		this.fetching = false;
 	}
@@ -121,6 +153,11 @@ export default class AppState {
 	@action.bound
 	handleStop() {
 		this.started = false;
+	}
+
+	@action.bound
+	handleDemoClick() {
+		this.recordingURL = `${VCR_URL}/data/test-recording-1.ndjson`;
 	}
 }
 

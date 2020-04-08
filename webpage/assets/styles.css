@@ -57,7 +57,7 @@ header {
 .form-fetch {
 	display: flex;
 	flex: 1;
-	position: relative;
+	align-items: baseline;
 }
 
 .form-fetch input {
@@ -65,9 +65,7 @@ header {
 }
 
 .form-fetch-icon {
-	position: absolute;
-	right: 0;
-	height: 100%;
+	width: 30px;
 }
 
 .button {

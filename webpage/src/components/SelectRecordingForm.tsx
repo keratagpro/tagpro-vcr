@@ -15,7 +15,6 @@ export default observer(function SelectRecordingForm() {
 			<UploadLabel />
 			<span> or&nbsp;&nbsp; </span>
 			<div className="form-fetch">
-				<div className="form-fetch-icon">{appState.fetchIcon}</div>
 				<input
 					type="text"
 					className="recording-url-input"
@@ -23,6 +22,9 @@ export default observer(function SelectRecordingForm() {
 					onChange={appState.handleUrlChange}
 					placeholder="Fetch from URL (http://...)"
 				/>
+				<div className="form-fetch-icon" title={appState.fetchTitle}>
+					{appState.fetchIcon}
+				</div>
 			</div>
 			<FileInput onChange={appState.handleFileSelect} />
 			<StartButton />

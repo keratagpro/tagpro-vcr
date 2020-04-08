@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 
-export default function Notes() {
+export default observer(function Notes() {
 	return (
 		<details open>
 			<summary>Notes</summary>
@@ -15,7 +16,8 @@ export default function Notes() {
 					<kbd>+</kbd>/<kbd>-</kbd> to zoom in/out etc. (see{' '}
 					<a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">TagPro wiki</a>)
 				</li>
+				<li>The VCR webpage stores the last recording you've uploaded in your browser's local storage.</li>
 			</ul>
 		</details>
 	);
-}
+});
