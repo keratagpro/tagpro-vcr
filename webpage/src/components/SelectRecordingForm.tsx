@@ -26,7 +26,6 @@ export default observer(function SelectRecordingForm() {
 					{appState.fetchIcon}
 				</div>
 			</div>
-			<FileInput onChange={appState.handleFileSelect} />
 			<StartButton />
 			<StopButton />
 		</div>
