@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 
-export default class GameState {
+export class GameState {
 	recorder: MediaRecorder;
 
 	@observable

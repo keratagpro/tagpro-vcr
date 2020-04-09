@@ -1,4 +1,4 @@
-export default class BasicRecorder {
+export class BasicRecorder {
 	started = false;
 	firstPacketTime: number;
 	packets: string[] = [];

@@ -44,10 +44,6 @@ export const buttonStyles = css`
 	}
 `;
 
-console.log(buttonStyles);
-
 export const Button = styled.div`
 	${buttonStyles}
 `;
-
-console.log(Button);

@@ -1,5 +1,5 @@
 import * as React from 'react';
 
-import GameState from './GameState';
+import { GameState } from './GameState';
 
-export default React.createContext<GameState>(null);
+export const GameContext = React.createContext<GameState>(null);

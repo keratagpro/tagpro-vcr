@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { observer } from 'mobx-react';
-import useGameState from '../stores/useGameState';
 import * as classNames from 'classnames';
+import { observer } from 'mobx-react';
+import * as React from 'react';
 
-export default observer(function Recorder() {
+import { useGameState } from '../stores/useGameState';
+
+export const Recorder = observer(function Recorder() {
 	const gameState = useGameState();
 
 	return (

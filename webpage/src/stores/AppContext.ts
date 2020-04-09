@@ -1,5 +1,5 @@
 import * as React from 'react';
 
-import AppState from './AppState';
+import { AppState } from './AppState';
 
-export default React.createContext<AppState>(null);
+export const AppContext = React.createContext<AppState>(null);

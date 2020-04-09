@@ -1,10 +1,10 @@
-declare var self: DedicatedWorkerGlobalScope;
-
 import * as EventEmitter from 'eventemitter3';
 
-import PacketDataPlayer from './utils/PacketDataPlayer';
+import { PacketDataPlayer } from './utils/PacketDataPlayer';
 
-const worker = self as DedicatedWorkerGlobalScope;
+declare var self: DedicatedWorkerGlobalScope;
+
+const worker = self;
 const events = new EventEmitter();
 
 worker.addEventListener('message', function (ev) {

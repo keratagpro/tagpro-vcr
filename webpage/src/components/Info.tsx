@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-import UploadLabel from './UploadLabel';
-import StartButton from './StartButton';
-import useAppState from '../stores/useAppState';
+import { useAppState } from '../stores/useAppState';
+import { UploadLabel } from './UploadLabel';
+import { StartButton } from './StartButton';
 
 const VCR_URL = process.env.VCR_URL;
 
-export default observer(function Info() {
+export const Info = observer(function Info() {
 	const appState = useAppState();
 
 	return (

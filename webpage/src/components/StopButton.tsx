@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
-import useAppState from '../stores/useAppState';
+import { useAppState } from '../stores/useAppState';
 
-export default observer(function StopButton() {
+export const StopButton = observer(function StopButton() {
 	const appState = useAppState();
 
 	return (

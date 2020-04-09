@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 
-import App from './components/App';
-import AppState from './stores/AppState';
-import AppContext from './stores/AppContext';
+import { App } from './components/App';
+import { AppState } from './stores/AppState';
+import { AppContext } from './stores/AppContext';
 
 const appState = new AppState();
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 
-export default observer(function Notes() {
+export const Notes = observer(function Notes() {
 	return (
 		<details open>
 			<summary>Notes</summary>

@@ -1,8 +1,8 @@
 import * as EventEmitter from 'eventemitter3';
 
-import EventedWorker from './EventedWorker';
+import { EventedWorker } from './EventedWorker';
 
-export default class BackgroundPlayer extends EventEmitter {
+export class BackgroundPlayer extends EventEmitter {
 	worker: EventedWorker;
 
 	constructor(stringUrl = 'worker.js') {

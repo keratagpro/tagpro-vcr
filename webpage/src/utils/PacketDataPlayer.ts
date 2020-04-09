@@ -3,7 +3,7 @@ const now = performance.now.bind(performance);
 // NOTE: Minimum interval in browsers is 4ms.
 const DEFAULT_INTERVAL = 4;
 
-export default class PacketDataPlayer {
+export class PacketDataPlayer {
 	loopId;
 	currentIndex: number;
 	currentTime = 0;

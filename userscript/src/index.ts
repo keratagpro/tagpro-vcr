@@ -2,7 +2,7 @@ import createDebug from 'debug';
 import tagpro from 'tagpro';
 
 import * as utils from './utils';
-import BasicRecorder from './utils/BasicRecorder';
+import { BasicRecorder } from './utils/BasicRecorder';
 import { isFrontPage, isInGame, readyAsync } from './utils/tagpro';
 
 const debug = createDebug('vcr');

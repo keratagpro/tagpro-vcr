@@ -1,13 +1,12 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
-import FileInput from '../elements/FileInput';
-import useAppState from '../stores/useAppState';
-import UploadLabel from './UploadLabel';
-import StartButton from './StartButton';
-import StopButton from './StopButton';
+import { useAppState } from '../stores/useAppState';
+import { UploadLabel } from './UploadLabel';
+import { StartButton } from './StartButton';
+import { StopButton } from './StopButton';
 
-export default observer(function SelectRecordingForm() {
+export const SelectRecordingForm = observer(function SelectRecordingForm() {
 	const appState = useAppState();
 
 	return (

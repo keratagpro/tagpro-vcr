@@ -1,6 +1,6 @@
-import BackgroundPlayer from './BackgroundPlayer';
+import { BackgroundPlayer } from './BackgroundPlayer';
 
-export default class FakeSocket {
+export class FakeSocket {
 	constructor(public player: BackgroundPlayer) {}
 
 	on(type, listener) {

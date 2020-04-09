@@ -1,10 +1,10 @@
 import { action, computed, observable, reaction } from 'mobx';
 
-import EventedChannel from '../utils/EventedChannel';
+import { EventedChannel } from '../utils/EventedChannel';
 
 const VCR_URL = process.env.VCR_URL;
 
-export default class AppState {
+export class AppState {
 	channel: EventedChannel;
 
 	@observable recording = localStorage.getItem('recording');

@@ -1,6 +1,6 @@
 import * as EventEmitter from 'eventemitter3';
 
-export default class EventedWorker extends Worker {
+export class EventedWorker extends Worker {
 	events: EventEmitter;
 
 	constructor(stringUrl) {
