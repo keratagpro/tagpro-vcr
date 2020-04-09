@@ -10,12 +10,12 @@ export class BackgroundPlayer extends EventEmitter {
 
 		this.worker = new EventedWorker(stringUrl);
 
-		this.worker.on('packet', (ts: number, type: string, ...args: any[]) => {
+		this.worker.on('packet', (ts: number, type: string, ...args: unknown[]) => {
 			this.emit(type, ...args);
 		});
 	}
 
-	load(data: any) {
+	load(data: unknown) {
 		this.worker.emit('load', data);
 	}
 

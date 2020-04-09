@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 
+import { Recorder } from './components/Recorder';
+import { GameContext } from './stores/GameContext';
+import { GameState } from './stores/GameState';
 import { BackgroundPlayer } from './utils/BackgroundPlayer';
 import { EventedChannel } from './utils/EventedChannel';
 import { FakeSocket } from './utils/FakeSocket';
-import { GameState } from './stores/GameState';
-import { GameContext } from './stores/GameContext';
-import { Recorder } from './components/Recorder';
 
 const io = {
 	connect() {

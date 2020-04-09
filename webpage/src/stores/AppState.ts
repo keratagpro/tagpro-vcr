@@ -4,6 +4,25 @@ import { EventedChannel } from '../utils/EventedChannel';
 
 const VCR_URL = process.env.VCR_URL;
 
+function parseRecording(data: string) {
+	return data
+		.split('\n')
+		.filter((l) => l.trim().length > 0)
+		.map((line) => JSON.parse(line));
+}
+
+function localStore<T>(target: T, key: keyof T) {
+	return function () {
+		if (target[key]) {
+			// console.log('setting', key);
+			localStorage.setItem(key as string, String(target[key]));
+		} else {
+			// console.log('removing', key);
+			localStorage.removeItem(key as string);
+		}
+	};
+}
+
 export class AppState {
 	channel: EventedChannel;
 
@@ -75,7 +94,7 @@ export class AppState {
 							this.urlIsValid = false;
 						}
 					})
-					.catch((err) => {
+					.catch(() => {
 						this.recording = undefined;
 						this.fetching = false;
 						this.urlExists = false;
@@ -159,23 +178,4 @@ export class AppState {
 	handleDemoClick() {
 		this.recordingURL = `${VCR_URL}/data/test-recording-1.ndjson`;
 	}
-}
-
-function parseRecording(data: string) {
-	return data
-		.split('\n')
-		.filter((l) => l.trim().length > 0)
-		.map((line) => JSON.parse(line));
-}
-
-function localStore<T>(target: T, key: keyof T) {
-	return function () {
-		if (target[key]) {
-			// console.log('setting', key);
-			localStorage.setItem(key as string, String(target[key]));
-		} else {
-			// console.log('removing', key);
-			localStorage.removeItem(key as string);
-		}
-	};
 }

@@ -1,5 +1,20 @@
 import { action, observable } from 'mobx';
 
+function downloadUrl(url: string, filename: string) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	a.style.display = 'none';
+	a.href = url;
+	a.download = filename;
+	a.click();
+}
+
+function downloadBlob(blob: Blob) {
+	const url = URL.createObjectURL(blob);
+	downloadUrl(url, 'video.webm');
+	URL.revokeObjectURL(url);
+}
+
 export class GameState {
 	recorder: MediaRecorder;
 
@@ -32,11 +47,8 @@ export class GameState {
 
 		this.recorder = recorder;
 
-		recorder.ondataavailable = handleDataAvailable;
-		recorder.onstop = exportVideo;
-		recorder.start();
+		const chunks = [];
 
-		let chunks = [];
 		function handleDataAvailable(ev: BlobEvent) {
 			if (ev.data.size) {
 				chunks.push(ev.data);
@@ -50,6 +62,10 @@ export class GameState {
 
 			downloadBlob(blob);
 		}
+
+		recorder.ondataavailable = handleDataAvailable;
+		recorder.onstop = exportVideo;
+		recorder.start();
 	}
 
 	@action.bound
@@ -57,19 +73,4 @@ export class GameState {
 		this.recording = false;
 		this.recorder.stop();
 	}
-}
-
-function downloadBlob(blob: Blob) {
-	const url = URL.createObjectURL(blob);
-	downloadUrl(url, 'video.webm');
-	URL.revokeObjectURL(url);
-}
-
-function downloadUrl(url: string, filename: string) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	a.style.display = 'none';
-	a.href = url;
-	a.download = filename;
-	a.click();
 }

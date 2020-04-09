@@ -3,7 +3,7 @@ export class BasicRecorder {
 	firstPacketTime: number;
 	packets: string[] = [];
 
-	record(time: number, type: string, ...args: any[]) {
+	record(time: number, type: string, ...args: unknown[]) {
 		if (!this.started) {
 			this.started = true;
 			this.firstPacketTime = time;

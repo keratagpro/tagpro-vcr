@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { observer } from 'mobx-react';
+import * as React from 'react';
 
 import { useAppState } from '../stores/useAppState';
-import { UploadLabel } from './UploadLabel';
 import { StartButton } from './StartButton';
+import { UploadLabel } from './UploadLabel';
 
 const VCR_URL = process.env.VCR_URL;
 
@@ -19,7 +19,7 @@ export const Info = observer(function Info() {
 				</li>
 				<li>
 					Play a game of{' '}
-					<a href="http://tagpro.gg" target="_blank" rel="noreferrer">
+					<a href="http://tagpro.gg" target="_blank" rel="noopener noreferrer">
 						TagPro
 					</a>
 					.

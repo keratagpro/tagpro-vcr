@@ -45,5 +45,5 @@ export const buttonStyles = css`
 `;
 
 export const Button = styled.div`
-	${buttonStyles}
+	${buttonStyles};
 `;

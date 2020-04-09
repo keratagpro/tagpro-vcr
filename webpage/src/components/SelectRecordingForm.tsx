@@ -2,9 +2,9 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 
 import { useAppState } from '../stores/useAppState';
-import { UploadLabel } from './UploadLabel';
 import { StartButton } from './StartButton';
 import { StopButton } from './StopButton';
+import { UploadLabel } from './UploadLabel';
 
 export const SelectRecordingForm = observer(function SelectRecordingForm() {
 	const appState = useAppState();

@@ -7,14 +7,14 @@ export class PacketDataPlayer {
 	loopId;
 	currentIndex: number;
 	currentTime = 0;
-	scheduledPacket: [number, string, any];
+	scheduledPacket: [number, string, unknown];
 	paused = false;
 	startedAt: number;
 	duration: number;
 
 	constructor(
-		public packets: Array<[number, string, any]>,
-		public callback: (ts: number, type: string, data?: any) => void,
+		public packets: Array<[number, string, unknown]>,
+		public callback: (ts: number, type: string, data?: unknown) => void,
 		public doneCallback = () => {}
 	) {
 		this.currentIndex = 0;
@@ -28,7 +28,7 @@ export class PacketDataPlayer {
 	}
 
 	advance(to: number) {
-		const index = this.packets.findIndex(([ts]) => ts < to);
+		// const index = this.packets.findIndex(([ts]) => ts < to);
 
 		while (this.scheduledPacket) {
 			const packet = this.packets[this.currentIndex++];

@@ -3,7 +3,7 @@ import * as EventEmitter from 'eventemitter3';
 export class EventedWorker extends Worker {
 	events: EventEmitter;
 
-	constructor(stringUrl) {
+	constructor(stringUrl: string | URL) {
 		super(stringUrl);
 
 		const events = (this.events = new EventEmitter());

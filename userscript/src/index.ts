@@ -8,20 +8,6 @@ import { isFrontPage, isInGame, readyAsync } from './utils/tagpro';
 const debug = createDebug('vcr');
 debug.enabled = true;
 
-(async function () {
-	await readyAsync(tagpro);
-
-	if (isInGame(tagpro)) {
-		debug('Recording.');
-		startRecording(tagpro);
-	} else if (isFrontPage()) {
-		debug('Injecting link to VCR.');
-		utils.addLinkToVcr();
-	} else {
-		debug('Not in game.');
-	}
-})();
-
 function startRecording(tp: TagPro) {
 	const recorder = new BasicRecorder();
 
@@ -39,10 +25,24 @@ function startRecording(tp: TagPro) {
 
 	const listeners = utils.addPacketListeners(tp.rawSocket, events, recorder.record.bind(recorder));
 
-	window.addEventListener('beforeunload', async function (ev) {
+	window.addEventListener('beforeunload', async function () {
 		listeners.cancel();
 
 		const data = await recorder.end();
 		utils.saveFile(data, `tagpro-recording-${Date.now()}.ndjson`);
 	});
 }
+
+(async function () {
+	await readyAsync(tagpro);
+
+	if (isInGame(tagpro)) {
+		debug('Recording.');
+		startRecording(tagpro);
+	} else if (isFrontPage()) {
+		debug('Injecting link to VCR.');
+		utils.addLinkToVcr();
+	} else {
+		debug('Not in game.');
+	}
+})();

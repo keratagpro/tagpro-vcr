@@ -1,12 +1,12 @@
-type PacketCallback = (time: number, type: string, ...args: any[]) => void;
+type PacketCallback = (time: number, type: string, ...args: unknown[]) => void;
 
 export const now = () => Date.now();
 
 export function addPacketListeners(socket: SocketIO.Socket, events: string[], onPacket: PacketCallback) {
-	const packetListeners = new Map<string, (...args: any[]) => void>();
+	const packetListeners = new Map<string, (...args: unknown[]) => void>();
 
 	for (const type of events) {
-		const cb = function (data?: any) {
+		const cb = function (data?: unknown) {
 			onPacket(now(), type, data);
 		};
 
@@ -24,7 +24,7 @@ export function addPacketListeners(socket: SocketIO.Socket, events: string[], on
 	return { cancel };
 }
 
-export function saveFile(data: any, filename: string, type = 'application/x-ndjson') {
+export function saveFile(data: BlobPart, filename: string, type = 'application/x-ndjson') {
 	const blob = new Blob([data], { type });
 	const url = URL.createObjectURL(blob);
 

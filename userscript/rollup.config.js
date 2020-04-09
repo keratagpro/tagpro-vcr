@@ -1,9 +1,9 @@
-import fs from 'fs';
-import template from 'lodash.template';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
+import fs from 'fs';
+import template from 'lodash.template';
 import postcss from 'rollup-plugin-postcss';
 
 const { version } = require('./package.json');
@@ -23,6 +23,12 @@ const plugins = [
 
 if (!fs.existsSync('../docs')) {
 	fs.mkdirSync('../docs');
+}
+
+function renderTemplate(filename, data = undefined) {
+	const content = fs.readFileSync(filename);
+	const tpl = template(content);
+	return tpl(data);
 }
 
 const meta = renderTemplate('src/templates/meta.tpl.js', {
@@ -51,9 +57,3 @@ const config = {
 };
 
 export default config;
-
-function renderTemplate(filename, data = undefined) {
-	const content = fs.readFileSync(filename);
-	const tpl = template(content);
-	return tpl(data);
-}

@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { observer } from 'mobx-react';
+import * as React from 'react';
 
+import { Button } from '../elements/Button';
 import { FileInput } from '../elements/FileInput';
 import { useAppState } from '../stores/useAppState';
-import { Button } from '../elements/Button';
 
 interface Props {
 	label?: string;
