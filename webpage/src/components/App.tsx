@@ -4,9 +4,9 @@ import * as React from 'react';
 import { useAppState } from '../stores/useAppState';
 import { GameFrame } from './GameFrame';
 import { GlobalStyle } from './GlobalStyle';
+import { Header } from './Header';
 import { Info } from './Info';
 import { Notes } from './Notes';
-import { SelectRecordingForm } from './SelectRecordingForm';
 
 export const App = observer(function App() {
 	const appState = useAppState();
@@ -17,9 +17,7 @@ export const App = observer(function App() {
 
 			<h1 className="logo">📼 TagPro VCR</h1>
 
-			<header>
-				<SelectRecordingForm />
-			</header>
+			<Header />
 
 			{appState.started && <GameFrame />}
 

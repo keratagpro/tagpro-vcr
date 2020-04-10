@@ -36,6 +36,8 @@ export class AppState {
 	@observable urlExists?: boolean = undefined;
 	@observable urlIsValid?: boolean = undefined;
 
+	@observable showSettings = false;
+
 	constructor() {
 		const channel = new EventedChannel('vcr');
 		this.channel = channel;
@@ -177,5 +179,10 @@ export class AppState {
 	@action.bound
 	handleDemoClick() {
 		this.recordingURL = `${VCR_URL}/data/test-recording-1.ndjson`;
+	}
+
+	@action.bound
+	toggleSettings(visible = !this.showSettings) {
+		this.showSettings = visible;
 	}
 }

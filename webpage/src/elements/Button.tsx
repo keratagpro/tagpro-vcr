@@ -46,4 +46,7 @@ export const buttonStyles = css`
 
 export const Button = styled.div`
 	${buttonStyles};
+
+	padding-left: 15px;
+	padding-right: 15px;
 `;

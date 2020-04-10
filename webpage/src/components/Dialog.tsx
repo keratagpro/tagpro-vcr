@@ -20,17 +20,31 @@ const StyledDialog = styled.dialog`
 interface Props {
 	children?: React.ReactNode;
 	open?: boolean;
+	onClose?: (ev: Event) => void;
 }
 
-export function Dialog({ children, open }: Props) {
+export function Dialog({ children, open, onClose }: Props) {
 	const dialogRef = React.useRef<HTMLDialogElement>();
+
+	React.useEffect(() => {
+		function handleClose(ev: Event) {
+			ev.preventDefault();
+			onClose?.(ev);
+		}
+
+		dialogRef.current?.addEventListener('close', handleClose);
+
+		return () => {
+			dialogRef.current?.addEventListener('close', handleClose);
+		};
+	}, []);
 
 	React.useEffect(() => {
 		const dialog = dialogRef.current;
 
-		if (open) {
+		if (open && !dialog.open) {
 			dialog.showModal();
-		} else {
+		} else if (!open && dialog.open) {
 			dialog.close();
 		}
 	}, [open]);
