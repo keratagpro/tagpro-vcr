@@ -1,38 +1,32 @@
-import { observer } from 'mobx-react';
 import * as React from 'react';
+import styled from 'styled-components';
 
-// import { Button } from '../elements/Button';
-import { useAppState } from '../stores/useAppState';
-// import { Settings } from './Settings';
+import { FetchInput } from './FetchInput';
+import { SettingsButton } from './SettingsButton';
+import { SettingsDialog } from './SettingsDialog';
 import { StartButton } from './StartButton';
 import { StopButton } from './StopButton';
 import { UploadLabel } from './UploadLabel';
 
-export const Header = observer(function Header() {
-	const appState = useAppState();
+const StyledHeader = styled.header`
+	width: 100%;
+	max-width: 800px;
+	margin: 20px auto;
 
+	display: flex;
+	align-items: baseline;
+`;
+
+export function Header() {
 	return (
-		<header>
-			<div className="form-upload">
-				<UploadLabel />
-				<span> or&nbsp;&nbsp; </span>
-				<div className="form-fetch">
-					<input
-						type="text"
-						className="recording-url-input"
-						value={appState.recordingURL}
-						onChange={appState.handleUrlChange}
-						placeholder="Fetch from URL (http://...)"
-					/>
-					<div className="form-fetch-icon" title={appState.fetchTitle}>
-						{appState.fetchIcon}
-					</div>
-				</div>
-				<StartButton />
-				<StopButton />
-				{/* <Button onClick={() => appState.toggleSettings()}>⚙️</Button> */}
-				{/* <Settings /> */}
-			</div>
-		</header>
+		<StyledHeader>
+			<UploadLabel />
+			<span> or&nbsp; </span>
+			<FetchInput />
+			<StartButton />
+			<StopButton />
+			<SettingsButton />
+			<SettingsDialog />
+		</StyledHeader>
 	);
-});
+}

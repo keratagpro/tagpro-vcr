@@ -1,4 +1,4 @@
-import { action, computed, observable, reaction } from 'mobx';
+import { action, autorun, computed, observable, reaction } from 'mobx';
 
 import { EventedChannel } from '../utils/EventedChannel';
 
@@ -26,6 +26,8 @@ function localStore<T>(target: T, key: keyof T) {
 export class AppState {
 	channel: EventedChannel;
 
+	@observable theme = localStorage.getItem('theme');
+
 	@observable recording = localStorage.getItem('recording');
 	@observable recordingName = localStorage.getItem('recordingName');
 	@observable recordingURL = '';
@@ -44,6 +46,14 @@ export class AppState {
 
 		channel.on('request-recording', () => {
 			channel.emit('recording', parseRecording(this.recording));
+		});
+
+		autorun(() => {
+			if (this.theme) {
+				document.body.dataset.theme = this.theme;
+			} else {
+				delete document.body.dataset.theme;
+			}
 		});
 
 		reaction(
@@ -110,6 +120,7 @@ export class AppState {
 
 		reaction(() => this.recording, localStore(this, 'recording'));
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
+		reaction(() => this.theme, localStore(this, 'theme'));
 	}
 
 	@computed
@@ -184,5 +195,14 @@ export class AppState {
 	@action.bound
 	toggleSettings(visible = !this.showSettings) {
 		this.showSettings = visible;
+	}
+
+	@action.bound
+	toggleLightTheme() {
+		if (this.theme === 'light') {
+			this.theme = null;
+		} else {
+			this.theme = 'light';
+		}
 	}
 }
