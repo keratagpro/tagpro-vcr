@@ -79,6 +79,13 @@ export class AppState {
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
 	}
 
+	isEggBall() {
+		return this.recording
+			.split('\n')
+			.filter(l => l.match(/^\[\d+,"eggBall",/))
+			.length > 0
+	}
+
 	@action.bound
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
 		this.recordingURL = '';

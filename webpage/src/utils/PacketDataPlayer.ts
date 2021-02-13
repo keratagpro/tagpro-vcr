@@ -90,7 +90,7 @@ export default class PacketDataPlayer {
 
 		if (packet[1] == "connect") {
 			let index = this.packets.findIndex(p => p[1] == "end");
-			let endPacket = this.packets[index];
+			let endPacket = this.packets[index] || this.packets[this.packets.length-1];
 
 			packet[2] = packet[2] || {};
 			packet[2].duration = endPacket[0];

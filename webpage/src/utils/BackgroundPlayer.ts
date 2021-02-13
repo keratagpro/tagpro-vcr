@@ -13,6 +13,10 @@ export default class BackgroundPlayer extends EventEmitter {
 		this.worker.on('packet', (ts: number, type: string, ...args: any[]) => {
 			this.emit(type, ...args);
 		});
+
+		this.worker.on('end', () => {
+			this.emit('vcr_end');
+		});
 	}
 
 	load(data: any) {

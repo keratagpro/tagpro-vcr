@@ -19,7 +19,7 @@ const plugins = [
 		inject: false
 	}),
 	replace({
-		VCR_URL: 'https://keratagpro.github.io/tagpro-vcr/'
+		VCR_URL: 'https://bash-tp.github.io/tagpro-vcr/'
 		// VCR_URL: 'http://localhost:8080/'
 	})
 ];

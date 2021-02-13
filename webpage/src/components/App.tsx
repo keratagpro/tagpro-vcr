@@ -15,7 +15,12 @@ interface IProps {
 @observer
 export class App extends React.Component<IProps> {
 	renderGame() {
-		return <iframe id="game-frame" src="game.html" frameBorder="0" />;
+		const { appState } = this.props;
+
+		var eggBall = appState.isEggBall();
+		var gameSrc = eggBall ? "game-egg.html" : "game.html";
+
+		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
 	}
 
 	renderInfo() {
@@ -31,7 +36,7 @@ export class App extends React.Component<IProps> {
 					<ol>
 						<li>
 							Install the userscript:{' '}
-							<a href="https://keratagpro.github.io/tagpro-vcr/tagpro-vcr.user.js">tagpro-vcr.user.js</a>.
+							<a href="https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js">tagpro-vcr.user.js</a>.
 						</li>
 						<li>
 							Play a game of <a href="http://tagpro.gg">TagPro</a>.
@@ -45,7 +50,7 @@ export class App extends React.Component<IProps> {
 					<ul>
 						<li>
 							To test your TagPro userscripts here, add this @include:<br />
-							<code>// @include https://keratagpro.github.io/tagpro-vcr/game.html</code>
+							<code>// @include https://bash-tp.github.io/tagpro-vcr/game*.html</code>
 						</li>
 						<li>
 							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
@@ -127,7 +132,7 @@ export class App extends React.Component<IProps> {
 						</div>
 					</section>
 					<section className="navbar-section">
-						<a href="https://github.com/keratagpro/tagpro-vcr" className="btn">
+						<a href="https://github.com/bash-tp/tagpro-vcr" className="btn">
 							GitHub
 						</a>
 					</section>

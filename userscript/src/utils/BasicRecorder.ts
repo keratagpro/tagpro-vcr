@@ -1,3 +1,5 @@
+import * as stringify from './stringify.js';
+
 export default class BasicRecorder {
 	started = false;
 	firstPacketTime: number;
@@ -10,7 +12,8 @@ export default class BasicRecorder {
 		}
 
 		// NOTE: Have to stringify, since the TagPro game modifies the packets and adds circular references.
-		this.packets.push(JSON.stringify([time - this.firstPacketTime, type, ...args]));
+		const packet = stringify.stringify([time - this.firstPacketTime, type, ...args]);
+		this.packets.push(packet);
 	}
 
 	end() {
