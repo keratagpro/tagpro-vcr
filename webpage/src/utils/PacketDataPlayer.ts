@@ -19,6 +19,11 @@ export default class PacketDataPlayer {
 	) {
 		this.currentIndex = 0;
 		this.duration = packets[packets.length - 1][0];
+
+		let connect = packets.find(p => p[1] == "connect");
+		if (!connect) {
+			packets.splice(1, 0, [0, "connect", {}]);
+		}
 	}
 
 	seek(to: number) {
