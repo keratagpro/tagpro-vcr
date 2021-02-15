@@ -1,10 +1,13 @@
 import classnames from 'classnames';
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import Select from 'react-select';
+import Cookies from 'js-cookie';
 
 import { AppState } from '../stores/AppState';
 import { equals } from '../utils';
 import { Modal } from './Modal';
+import * as Textures from '../utils/Textures';
 
 import './App.css';
 
@@ -17,15 +20,34 @@ export class App extends React.Component<IProps> {
 	renderGame() {
 		const { appState } = this.props;
 
-		var eggBall = appState.isEggBall();
-		var gameSrc = eggBall ? "game-egg.html" : "game.html";
+		let eggBall = appState.isEggBall();
+		let gameSrc = eggBall ? "game-egg.html" : "game.html";
 
 		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
 	}
 
-	renderInfo() {
-		const { appState } = this.props;
+	renderTextureSelect() {
+		const textures = Textures.getTextureList();
+		let initial = { label: "Muscle's Cup Gradients" };
 
+		const cookie = Cookies.get("textures");
+		if (cookie) {
+			const texture = JSON.parse(cookie);
+			const name = texture.name;
+
+			if (Textures.getTexture(name)) {
+				initial.label = name;
+			}
+		}
+
+		return <Select defaultValue={initial} options={textures} onChange={this.handleTextureChange} menuPosition="fixed" />;
+	}
+
+	handleTextureChange = selection => {
+		Cookies.set("textures", selection.value);
+	}
+
+	renderInfo() {
 		return (
 			<div className="container grid-sm panel">
 				<div className="panel-header">
@@ -58,6 +80,10 @@ export class App extends React.Component<IProps> {
 							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
 						</li>
 					</ul>
+					<h6>Texture Pack Selection</h6>
+					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
+					<div>{this.renderTextureSelect()}</div>
+					<p />
 				</div>
 			</div>
 		);
