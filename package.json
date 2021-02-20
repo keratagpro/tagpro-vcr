@@ -8,7 +8,7 @@
     "watch": "lerna run --parallel watch"
   },
   "devDependencies": {
-    "lerna": "^2.11.0",
-    "rimraf": "^2.6.2"
+    "lerna": "^3.22.1",
+    "rimraf": "^3.0.2"
   }
 }

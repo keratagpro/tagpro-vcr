@@ -12,7 +12,7 @@ worker.addEventListener('message', function(ev) {
 
 let player: PacketDataPlayer;
 
-events.on('load', function(replay: Array<[number, string, any]>) {
+events.on('load', function(replay: [number, string, any][]) {
 	if (player) {
 		player.pause();
 	}

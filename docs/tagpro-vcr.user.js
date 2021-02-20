@@ -17,11 +17,13 @@
 // @require       https://wzrd.in/standalone/debug@latest
 // ==/UserScript==
 
-(function (createDebug,tagpro) {
+(function (createDebug, tagpro) {
 	'use strict';
 
-	createDebug = createDebug && createDebug.hasOwnProperty('default') ? createDebug['default'] : createDebug;
-	tagpro = tagpro && tagpro.hasOwnProperty('default') ? tagpro['default'] : tagpro;
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+	var createDebug__default = /*#__PURE__*/_interopDefaultLegacy(createDebug);
+	var tagpro__default = /*#__PURE__*/_interopDefaultLegacy(tagpro);
 
 	const now = () => Date.now();
 	function addPacketListeners(socket, events, onPacket) {
@@ -108,23 +110,23 @@
 	    }
 	}
 
-	function isInGame(tagpro$$1) {
-	    return tagpro$$1.state > 0;
+	function isInGame(tagpro) {
+	    return tagpro.state > 0;
 	}
 	function isFrontPage() {
 	    return !!document.querySelector('#userscript-home');
 	}
-	function readyAsync(tagpro$$1) {
-	    return new Promise(resolve => tagpro$$1.ready(resolve));
+	function readyAsync(tagpro) {
+	    return new Promise(resolve => tagpro.ready(resolve));
 	}
 
-	const debug = createDebug('vcr');
+	const debug = createDebug__default['default']('vcr');
 	debug.enabled = true;
 	(async function () {
-	    await readyAsync(tagpro);
-	    if (isInGame(tagpro)) {
+	    await readyAsync(tagpro__default['default']);
+	    if (isInGame(tagpro__default['default'])) {
 	        debug('Recording.');
-	        startRecording(tagpro);
+	        startRecording(tagpro__default['default']);
 	    }
 	    else if (isFrontPage()) {
 	        debug('Injecting link to VCR.');
@@ -153,4 +155,4 @@
 	    });
 	}
 
-}(debug,tagpro));
+}(debug, tagpro));

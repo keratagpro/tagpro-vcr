@@ -6,25 +6,27 @@
     "start": "npm run watch",
     "prebuild": "rimraf build",
     "build": "rollup --config",
-    "watch": "rollup --config --watch"
+    "watch": "rollup --config --watch",
+    "lint": "tslint --project ."
   },
   "devDependencies": {
-    "@types/classnames": "^2.2.3",
-    "@types/debug": "0.0.30",
-    "@types/greasemonkey": "0.0.28",
-    "@types/pixi.js": "^4.7.3",
-    "@types/react": "^16.3.14",
-    "@types/react-dom": "^16.0.5",
-    "@types/socket.io": "^1.4.33",
-    "debug": "^3.1.0",
-    "lodash.template": "^4.4.0",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.59.1",
+    "@types/classnames": "^2.2.11",
+    "@types/debug": "4.1.5",
+    "@types/greasemonkey": "4.0.1",
+    "@types/pixi.js": "^4.8.9",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "@types/socket.io": "^2.1.13",
+    "debug": "^4.3.1",
+    "lodash.template": "^4.5.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.39.0",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-postcss": "^1.6.1",
+    "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-typescript": "^1.1.2",
-    "typescript": "^2.8.3"
+    "tslint": "^6.1.3",
+    "typescript": "^4.1.5"
   }
 }

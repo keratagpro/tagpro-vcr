@@ -13,14 +13,14 @@ export default class PacketDataPlayer {
 	duration: number;
 
 	constructor(
-		public packets: Array<[number, string, any]>,
+		public packets: [number, string, any][],
 		public callback: (ts: number, type: string, data?: any) => void,
 		public doneCallback = () => {}
 	) {
 		this.currentIndex = 0;
 		this.duration = packets[packets.length - 1][0];
 
-		let connect = packets.find(p => p[1] == "connect");
+		const connect = packets.find(p => p[1] === "connect");
 		if (!connect) {
 			packets.splice(1, 0, [0, "connect", {}]);
 		}
@@ -30,22 +30,22 @@ export default class PacketDataPlayer {
 		let index = this.packets.findIndex(([ts]) => ts < to);
 		let packet = this.packets[index];
 
-		let event = { ts: 0, time: 0, state: 0 };
+		const event = { ts: 0, time: 0, state: 0 };
 
 		while (packet) {
 			packet = this.packets[++index];
 
 			this.currentTime = packet[0];
 
-			if (packet[1] == "time") {
+			if (packet[1] === "time") {
 				event.ts = packet[0];
 				event.time = packet[2].time;
 				event.state = packet[2].state;
 			}
 
 			if (packet[0] > to) {
-				let offset = packet[0] - event.ts;
-				let newtime = event.state == 5 ? event.time + offset : event.time - offset;
+				const offset = packet[0] - event.ts;
+				const newtime = event.state === 5 ? event.time + offset : event.time - offset;
 
 				this.callback(packet[0], "time", { time: newtime, state: event.state, restore: true });
 
@@ -93,9 +93,9 @@ export default class PacketDataPlayer {
 			return;
 		}
 
-		if (packet[1] == "connect") {
-			let index = this.packets.findIndex(p => p[1] == "end");
-			let endPacket = this.packets[index] || this.packets[this.packets.length-1];
+		if (packet[1] === "connect") {
+			const index = this.packets.findIndex(p => p[1] === "end");
+			const endPacket = this.packets[index] || this.packets[this.packets.length-1];
 
 			packet[2] = packet[2] || {};
 			packet[2].duration = endPacket[0];

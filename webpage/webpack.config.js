@@ -37,7 +37,8 @@ module.exports = [
 		resolve,
 		module: modules,
 		optimization,
-		plugins: [new CopyPlugin([{ from: 'src/assets', ignore: ['README.md'] }])]
+		plugins: [new CopyPlugin([{ from: 'src/assets', ignore: ['README.md'] }])],
+		devtool: 'source-map'
 	},
 	{
 		mode: 'development',

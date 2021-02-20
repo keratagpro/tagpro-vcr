@@ -1,12 +1,10 @@
 import classnames from 'classnames';
+import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import Select from 'react-select';
-import Cookies from 'js-cookie';
 
 import { AppState } from '../stores/AppState';
-import { equals } from '../utils';
-import { Modal } from './Modal';
 import * as Textures from '../utils/Textures';
 
 import './App.css';
@@ -15,20 +13,19 @@ interface IProps {
 	appState: AppState;
 }
 
-@observer
-export class App extends React.Component<IProps> {
+export const App = observer(class AppClass extends React.Component<IProps> {
 	renderGame() {
 		const { appState } = this.props;
 
-		let eggBall = appState.isEggBall();
-		let gameSrc = eggBall ? "game-egg.html" : "game.html";
+		const eggBall = appState.isEggBall();
+		const gameSrc = eggBall ? "game-egg.html" : "game.html";
 
 		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
 	}
 
 	renderTextureSelect() {
 		const textures = Textures.getTextureList();
-		let initial = { label: "Muscle's Cup Gradients" };
+		const initial = { label: "Muscle's Cup Gradients" };
 
 		const cookie = Cookies.get("textures");
 		if (cookie) {
@@ -168,4 +165,4 @@ export class App extends React.Component<IProps> {
 			</div>
 		);
 	}
-}
+});

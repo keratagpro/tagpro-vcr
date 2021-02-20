@@ -463,7 +463,7 @@ export function getTexture(name) {
 }
 
 export function getTextureList() {
-	let list = [];
+	const list = [];
 
 	Object.entries(textures).forEach(([name, texture]) => {
 		list.push({ label: name, value: JSON.stringify(texture) });

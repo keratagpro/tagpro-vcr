@@ -1,21 +1,34 @@
-import { action, computed, extendObservable, observable, observe, reaction } from 'mobx';
+import { action, makeObservable, observable, reaction, runInAction } from 'mobx';
 
-import { equals } from '../utils';
 import EventedChannel from '../utils/EventedChannel';
 
 export class AppState {
 	channel: EventedChannel;
 
-	@observable recording = localStorage.getItem('recording');
-	@observable recordingName = localStorage.getItem('recordingName');
-	@observable recordingURL = '';
+	recording = localStorage.getItem('recording');
+	recordingName = localStorage.getItem('recordingName');
+	recordingURL = '';
 
-	@observable selectedFile: File = undefined;
-	@observable started = false;
-	@observable fetching = false;
-	@observable urlIsValid = undefined;
+	selectedFile: File = undefined;
+	started = false;
+	fetching = false;
+	urlIsValid = undefined;
 
 	constructor() {
+		makeObservable(this, {
+			recording: observable,
+			recordingName: observable,
+			recordingURL: observable,
+			selectedFile: observable,
+			started: observable,
+			fetching: observable,
+			urlIsValid: observable,
+			handleFileSelect: action.bound,
+			handleUrlChange: action.bound,
+			handleStart: action.bound,
+			handleStop: action.bound
+		});
+
 		const channel = (this.channel = new EventedChannel('vcr'));
 
 		channel.on('request-recording', () => {
@@ -34,8 +47,10 @@ export class AppState {
 				const reader = new FileReader();
 
 				reader.addEventListener('load', () => {
-					this.recordingName = file.name;
-					this.recording = reader.result;
+                                        runInAction(() => {
+					        this.recordingName = file.name;
+					        this.recording = reader.result as string;
+                                        });
 				});
 
 				reader.readAsText(file);
@@ -83,16 +98,14 @@ export class AppState {
 		return this.recording
 			.split('\n')
 			.filter(l => l.match(/^\[\d+,"eggBall",/))
-			.length > 0
+			.length > 0;
 	}
 
-	@action.bound
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
 		this.recordingURL = '';
 		this.selectedFile = ev.target.files[0];
 	}
 
-	@action.bound
 	handleUrlChange(ev: React.ChangeEvent<HTMLInputElement>) {
 		this.recordingURL = ev.target.value;
 		this.selectedFile = undefined;
@@ -101,7 +114,6 @@ export class AppState {
 		this.fetching = false;
 	}
 
-	@action.bound
 	handleStart() {
 		if (!this.recording) {
 			return;
@@ -110,7 +122,6 @@ export class AppState {
 		this.started = true;
 	}
 
-	@action.bound
 	handleStop() {
 		this.started = false;
 	}
@@ -123,7 +134,7 @@ function parseRecording(data: string) {
 		.map(line => JSON.parse(line));
 }
 
-function localStore<T>(target: T, key: keyof T) {
+function localStore<T>(target: T, key: keyof T & string) {
 	return function() {
 		if (target[key]) {
 			// console.log('setting', key);

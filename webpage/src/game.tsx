@@ -34,13 +34,13 @@ const io = {
 			for (const id in players) {
 				if (players.hasOwnProperty(id)) {
 					players[id].lastSync = {};
-					if (Number(id) != window.tagpro.playerId) {
+					if (Number(id) !== window.tagpro.playerId) {
 						player.emit("playerLeft", id);
 					}
 				}
 			}
 
-			for (var i = 0; i < 10; i++) {
+			for (let i = 0; i < 10; i++) {
 				player.emit("chat", { from: null, to: "all", message: "\xa0" });
 			}
 
