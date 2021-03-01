@@ -16,6 +16,11 @@ body,
 	flex-direction: column;
 }
 
+.panel {
+	height: 98%;
+	padding-bottom: 0.4rem;
+}
+
 #file {
 	display: none;
 }

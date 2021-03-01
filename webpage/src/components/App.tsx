@@ -1,10 +1,9 @@
 import classnames from 'classnames';
-import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import Select from 'react-select';
 
 import { AppState } from '../stores/AppState';
+import * as ProfileSettings from '../utils/ProfileSettings';
 import * as Textures from '../utils/Textures';
 
 import './App.css';
@@ -21,27 +20,6 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		const gameSrc = eggBall ? "game-egg.html" : "game.html";
 
 		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
-	}
-
-	renderTextureSelect() {
-		const textures = Textures.getTextureList();
-		const initial = { label: "Muscle's Cup Gradients" };
-
-		const cookie = Cookies.get("textures");
-		if (cookie) {
-			const texture = JSON.parse(cookie);
-			const name = texture.name;
-
-			if (Textures.getTexture(name)) {
-				initial.label = name;
-			}
-		}
-
-		return <Select defaultValue={initial} options={textures} onChange={this.handleTextureChange} menuPosition="fixed" />;
-	}
-
-	handleTextureChange = selection => {
-		Cookies.set("textures", selection.value);
 	}
 
 	renderInfo() {
@@ -79,8 +57,21 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					</ul>
 					<h6>Texture Pack Selection</h6>
 					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
-					<div>{this.renderTextureSelect()}</div>
+					<div>{Textures.renderTextureSelect()}</div>
 					<p />
+					<h6>Settings</h6>
+					<div className="columns">
+						<div className="column col-6">
+							{ProfileSettings.renderProfileCheckbox('disableBallSpin', 'Enable Ball Spin', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('disableParticles', 'Enable Particle Effects', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}
+						</div>
+						<div className="column col-6">
+							Tile Respawn Warnings:<br />
+							{ProfileSettings.renderTileRespawnSelect()}
+						</div>
+					</div>
 				</div>
 			</div>
 		);

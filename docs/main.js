@@ -173,7 +173,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()(_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default.a);
 // Module
-___CSS_LOADER_EXPORT___.push([module.i, ".game-frame {\n\twidth: 100%;\n\tmin-width: 1280px;\n\tmin-height: 800px;\n}\n\nhtml,\nbody,\n#root,\n#container {\n\theight: 100%;\n}\n\n#container {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n#file {\n\tdisplay: none;\n}\n\n#header {\n\tpadding: 0.4rem;\n\twhite-space: nowrap;\n}\n\n#game-container {\n\tmargin-top: 0.4rem;\n\tflex: 10;\n\toverflow: hidden;\n}\n\n#game-frame {\n\twidth: 100%;\n\theight: 100%;\n}\n", "",{"version":3,"sources":["webpack://./src/components/App.css"],"names":[],"mappings":"AAAA;CACC,WAAW;CACX,iBAAiB;CACjB,iBAAiB;AAClB;;AAEA;;;;CAIC,YAAY;AACb;;AAEA;CACC,aAAa;CACb,sBAAsB;AACvB;;AAEA;CACC,aAAa;AACd;;AAEA;CACC,eAAe;CACf,mBAAmB;AACpB;;AAEA;CACC,kBAAkB;CAClB,QAAQ;CACR,gBAAgB;AACjB;;AAEA;CACC,WAAW;CACX,YAAY;AACb","sourcesContent":[".game-frame {\n\twidth: 100%;\n\tmin-width: 1280px;\n\tmin-height: 800px;\n}\n\nhtml,\nbody,\n#root,\n#container {\n\theight: 100%;\n}\n\n#container {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n#file {\n\tdisplay: none;\n}\n\n#header {\n\tpadding: 0.4rem;\n\twhite-space: nowrap;\n}\n\n#game-container {\n\tmargin-top: 0.4rem;\n\tflex: 10;\n\toverflow: hidden;\n}\n\n#game-frame {\n\twidth: 100%;\n\theight: 100%;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.i, ".game-frame {\n\twidth: 100%;\n\tmin-width: 1280px;\n\tmin-height: 800px;\n}\n\nhtml,\nbody,\n#root,\n#container {\n\theight: 100%;\n}\n\n#container {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.panel {\n\theight: 98%;\n\tpadding-bottom: 0.4rem;\n}\n\n#file {\n\tdisplay: none;\n}\n\n#header {\n\tpadding: 0.4rem;\n\twhite-space: nowrap;\n}\n\n#game-container {\n\tmargin-top: 0.4rem;\n\tflex: 10;\n\toverflow: hidden;\n}\n\n#game-frame {\n\twidth: 100%;\n\theight: 100%;\n}\n", "",{"version":3,"sources":["webpack://./src/components/App.css"],"names":[],"mappings":"AAAA;CACC,WAAW;CACX,iBAAiB;CACjB,iBAAiB;AAClB;;AAEA;;;;CAIC,YAAY;AACb;;AAEA;CACC,aAAa;CACb,sBAAsB;AACvB;;AAEA;CACC,WAAW;CACX,sBAAsB;AACvB;;AAEA;CACC,aAAa;AACd;;AAEA;CACC,eAAe;CACf,mBAAmB;AACpB;;AAEA;CACC,kBAAkB;CAClB,QAAQ;CACR,gBAAgB;AACjB;;AAEA;CACC,WAAW;CACX,YAAY;AACb","sourcesContent":[".game-frame {\n\twidth: 100%;\n\tmin-width: 1280px;\n\tmin-height: 800px;\n}\n\nhtml,\nbody,\n#root,\n#container {\n\theight: 100%;\n}\n\n#container {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.panel {\n\theight: 98%;\n\tpadding-bottom: 0.4rem;\n}\n\n#file {\n\tdisplay: none;\n}\n\n#header {\n\tpadding: 0.4rem;\n\twhite-space: nowrap;\n}\n\n#game-container {\n\tmargin-top: 0.4rem;\n\tflex: 10;\n\toverflow: hidden;\n}\n\n#game-frame {\n\twidth: 100%;\n\theight: 100%;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ __webpack_exports__["default"] = (___CSS_LOADER_EXPORT___);
 
@@ -220,109 +220,101 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "App", function() { return App; });
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! js-cookie */ "./node_modules/js-cookie/src/js.cookie.js");
-/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(js_cookie__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.browser.esm.js");
-/* harmony import */ var _utils_Textures__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/Textures */ "./src/utils/Textures.ts");
-/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./App.css */ "./src/components/App.css");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/ProfileSettings */ "./src/utils/ProfileSettings.tsx");
+/* harmony import */ var _utils_Textures__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/Textures */ "./src/utils/Textures.tsx");
+/* harmony import */ var _App_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./App.css */ "./src/components/App.css");
 
 
 
 
 
 
-
-const App = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(class AppClass extends react__WEBPACK_IMPORTED_MODULE_3__["Component"] {
-    constructor() {
-        super(...arguments);
-        this.handleTextureChange = selection => {
-            js_cookie__WEBPACK_IMPORTED_MODULE_1___default.a.set("textures", selection.value);
-        };
-    }
+const App = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(class AppClass extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     renderGame() {
         const { appState } = this.props;
         const eggBall = appState.isEggBall();
         const gameSrc = eggBall ? "game-egg.html" : "game.html";
-        return react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("iframe", { id: "game-frame", src: gameSrc, frameBorder: "0" });
-    }
-    renderTextureSelect() {
-        const textures = _utils_Textures__WEBPACK_IMPORTED_MODULE_5__["getTextureList"]();
-        const initial = { label: "Muscle's Cup Gradients" };
-        const cookie = js_cookie__WEBPACK_IMPORTED_MODULE_1___default.a.get("textures");
-        if (cookie) {
-            const texture = JSON.parse(cookie);
-            const name = texture.name;
-            if (_utils_Textures__WEBPACK_IMPORTED_MODULE_5__["getTexture"](name)) {
-                initial.label = name;
-            }
-        }
-        return react__WEBPACK_IMPORTED_MODULE_3__["createElement"](react_select__WEBPACK_IMPORTED_MODULE_4__["default"], { defaultValue: initial, options: textures, onChange: this.handleTextureChange, menuPosition: "fixed" });
+        return react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("iframe", { id: "game-frame", src: gameSrc, frameBorder: "0" });
     }
     renderInfo() {
-        return (react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: "container grid-sm panel" },
-            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: "panel-header" },
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: "panel-title h5" }, "TagPro VCR")),
-            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: "panel-body" },
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("h6", null, "Usage"),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("ol", null,
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("li", null,
+        return (react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "container grid-sm panel" },
+            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "panel-header" },
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "panel-title h5" }, "TagPro VCR")),
+            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "panel-body" },
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("h6", null, "Usage"),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("ol", null,
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("li", null,
                         "Install the userscript:",
                         ' ',
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("a", { href: "https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js" }, "tagpro-vcr.user.js"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", { href: "https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js" }, "tagpro-vcr.user.js"),
                         "."),
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("li", null,
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("li", null,
                         "Play a game of ",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("a", { href: "http://tagpro.gg" }, "TagPro"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", { href: "http://tagpro.gg" }, "TagPro"),
                         "."),
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("li", null,
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("li", null,
                         "Upload the recorded game here (",
                         this.renderUploadLabel(),
                         ") and click",
                         ' ',
                         this.renderStartButton(),
                         ".")),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("h6", null, "Notes"),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("ul", null,
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("li", null,
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("h6", null, "Notes"),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("ul", null,
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("li", null,
                         "To test your TagPro userscripts here, add this @include:",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("br", null),
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("code", null, "// @include https://bash-tp.github.io/tagpro-vcr/game*.html")),
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("li", null,
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("br", null),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("code", null, "// @include https://bash-tp.github.io/tagpro-vcr/game*.html")),
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("li", null,
                         "The game is running in \"spectator\"-mode, so you can press ",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("code", null, "C"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("code", null, "C"),
                         " to center the view,",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("code", null, "+"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("code", null, "+"),
                         "/",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("code", null, "-"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("code", null, "-"),
                         " to zoom in/out etc. (see ",
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("a", { href: "https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator" }, "wiki"),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", { href: "https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator" }, "wiki"),
                         ").")),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("h6", null, "Texture Pack Selection"),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("p", null,
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("h6", null, "Texture Pack Selection"),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("p", null,
                     "See ",
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("a", { href: "https://tagpro.koalabeast.com/textures/" }, "game"),
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", { href: "https://tagpro.koalabeast.com/textures/" }, "game"),
                     " for available texture packs."),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", null, this.renderTextureSelect()),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("p", null))));
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", null, _utils_Textures__WEBPACK_IMPORTED_MODULE_4__["renderTextureSelect"]()),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("p", null),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("h6", null, "Settings"),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "columns" },
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "column col-6" },
+                        _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__["renderProfileCheckbox"]('disableBallSpin', 'Enable Ball Spin', false),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("br", null),
+                        _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__["renderProfileCheckbox"]('disableParticles', 'Enable Particle Effects', false),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("br", null),
+                        _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__["renderProfileCheckbox"]('forceCanvasRenderer', 'Enable WebGL Rendering', false),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("br", null),
+                        _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__["renderProfileCheckbox"]('disableViewportScaling', 'Enable Viewport Scaling', true)),
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "column col-6" },
+                        "Tile Respawn Warnings:",
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("br", null),
+                        _utils_ProfileSettings__WEBPACK_IMPORTED_MODULE_3__["renderTileRespawnSelect"]())))));
     }
     renderUploadLabel(label) {
-        return (react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("label", { htmlFor: "file", className: "btn btn-link" },
-            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("i", { className: "icon icon-upload" }),
+        return (react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("label", { htmlFor: "file", className: "btn btn-link" },
+            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("i", { className: "icon icon-upload" }),
             " ",
             label || 'Upload recording'));
     }
     renderStartButton() {
         const { appState } = this.props;
-        return (react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("button", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('btn btn-success', {
+        return (react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("button", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('btn btn-success', {
                 disabled: appState.started || !appState.recording
             }), onClick: appState.handleStart }, "Start"));
     }
     renderStopButton() {
         const { appState } = this.props;
-        return (react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("button", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('btn btn-error', { disabled: !appState.started }), onClick: appState.handleStop }, "Stop"));
+        return (react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("button", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('btn btn-error', { disabled: !appState.started }), onClick: appState.handleStop }, "Stop"));
     }
     render() {
         const { appState } = this.props;
@@ -331,25 +323,25 @@ const App = Object(mobx_react__WEBPACK_IMPORTED_MODULE_2__["observer"])(class Ap
             'icon-check': appState.recordingURL && !appState.fetching && appState.urlIsValid === true,
             'icon-stop': appState.recordingURL && appState.urlIsValid === false
         });
-        return (react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { id: "container" },
-            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("header", { id: "header", className: "navbar" },
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("section", { className: "navbar-section" },
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("span", null, "TagPro VCR")),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("section", { className: "navbar-center" },
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: "form-horizontal" },
+        return (react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { id: "container" },
+            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("header", { id: "header", className: "navbar" },
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("section", { className: "navbar-section" },
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("span", null, "TagPro VCR")),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("section", { className: "navbar-center" },
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: "form-horizontal" },
                         this.renderUploadLabel(appState.recordingName),
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("span", null, " or "),
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('input-group input-inline', { 'has-icon-right': !!appState.recordingURL }) },
-                            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("input", { className: "form-input", type: "text", value: appState.recordingURL, onChange: appState.handleUrlChange, placeholder: "Fetch from URL (http://...)" }),
-                            appState.recordingURL && react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("i", { className: fetchClasses })),
-                        react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("input", { id: "file", type: "file", accept: ".ndjson,.jsonl", onChange: appState.handleFileSelect }),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("span", null, " or "),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { className: classnames__WEBPACK_IMPORTED_MODULE_0___default()('input-group input-inline', { 'has-icon-right': !!appState.recordingURL }) },
+                            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("input", { className: "form-input", type: "text", value: appState.recordingURL, onChange: appState.handleUrlChange, placeholder: "Fetch from URL (http://...)" }),
+                            appState.recordingURL && react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("i", { className: fetchClasses })),
+                        react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("input", { id: "file", type: "file", accept: ".ndjson,.jsonl", onChange: appState.handleFileSelect }),
                         ' ',
                         this.renderStartButton(),
                         ' ',
                         this.renderStopButton())),
-                react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("section", { className: "navbar-section" },
-                    react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("a", { href: "https://github.com/bash-tp/tagpro-vcr", className: "btn" }, "GitHub"))),
-            react__WEBPACK_IMPORTED_MODULE_3__["createElement"]("div", { id: "game-container" }, appState.started ? this.renderGame() : this.renderInfo())));
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("section", { className: "navbar-section" },
+                    react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("a", { href: "https://github.com/bash-tp/tagpro-vcr", className: "btn" }, "GitHub"))),
+            react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("div", { id: "game-container" }, appState.started ? this.renderGame() : this.renderInfo())));
     }
 });
 
@@ -547,17 +539,80 @@ class EventedChannel extends BroadcastChannel {
 
 /***/ }),
 
-/***/ "./src/utils/Textures.ts":
-/*!*******************************!*\
-  !*** ./src/utils/Textures.ts ***!
-  \*******************************/
-/*! exports provided: getTexture, getTextureList */
+/***/ "./src/utils/ProfileSettings.tsx":
+/*!***************************************!*\
+  !*** ./src/utils/ProfileSettings.tsx ***!
+  \***************************************/
+/*! exports provided: renderProfileCheckbox, renderTileRespawnSelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTexture", function() { return getTexture; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTextureList", function() { return getTextureList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderProfileCheckbox", function() { return renderProfileCheckbox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderTileRespawnSelect", function() { return renderTileRespawnSelect; });
+/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! js-cookie */ "./node_modules/js-cookie/src/js.cookie.js");
+/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(js_cookie__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.browser.esm.js");
+
+
+
+// Checkboxes:
+function handleCheckboxChange(e) {
+    js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.set(e.target.id, String(!e.target.checked));
+}
+function renderProfileCheckbox(cookieName, label, defaultValue) {
+    const cookie = js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.get(cookieName);
+    const initial = cookie === 'true' ? true :
+        cookie === 'false' ? false :
+            defaultValue;
+    // NOTE: the booleans are always inverted. For example:
+    // Enable Ball Spin, the cookie name is disableBallSpin.
+    // When checked, the cookie value is false, and when unchecked it's true.
+    // The defaultValue parameter is the default cookie value, NOT checked.
+    return (react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", null,
+        react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", { type: "checkbox", id: cookieName, defaultChecked: !initial, onChange: handleCheckboxChange }),
+        ' ',
+        label));
+}
+// Select for Tile Respawn Warnings:
+const respawns = [
+    { label: 'Blink', value: 'blink' },
+    { label: 'Transparent', value: 'alpha' },
+    { label: 'None', value: 'none' }
+];
+function tileRespawnChange(selection) {
+    js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.set('tileRespawnWarnings', selection.value);
+}
+function renderTileRespawnSelect() {
+    var _a;
+    const cookie = js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.get('tileRespawnWarnings');
+    const initial = (_a = respawns.find(r => r.value === cookie)) !== null && _a !== void 0 ? _a : respawns[0];
+    return (react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], { defaultValue: initial, options: respawns, onChange: tileRespawnChange, menuPosition: "fixed" }));
+}
+
+
+/***/ }),
+
+/***/ "./src/utils/Textures.tsx":
+/*!********************************!*\
+  !*** ./src/utils/Textures.tsx ***!
+  \********************************/
+/*! exports provided: renderTextureSelect */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "renderTextureSelect", function() { return renderTextureSelect; });
+/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! js-cookie */ "./node_modules/js-cookie/src/js.cookie.js");
+/* harmony import */ var js_cookie__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(js_cookie__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_select__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.browser.esm.js");
+
+
+
 const textures = {
     "Classic": {
         "author": "LuckySpammer",
@@ -1025,6 +1080,21 @@ function getTextureList() {
         list.push({ label: name, value: JSON.stringify(texture) });
     });
     return list;
+}
+function handleTextureChange(selection) {
+    js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.set('textures', selection.value);
+}
+function renderTextureSelect() {
+    const initial = { label: "Muscle's Cup Gradients" };
+    const cookie = js_cookie__WEBPACK_IMPORTED_MODULE_0___default.a.get('textures');
+    if (cookie) {
+        const texture = JSON.parse(cookie);
+        const name = texture.name;
+        if (getTexture(name)) {
+            initial.label = name;
+        }
+    }
+    return (react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_select__WEBPACK_IMPORTED_MODULE_2__["default"], { defaultValue: initial, options: getTextureList(), onChange: handleTextureChange, menuPosition: "fixed" }));
 }
 
 

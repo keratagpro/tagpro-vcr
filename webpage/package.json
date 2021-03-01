@@ -5,7 +5,8 @@
     "start": "npm run watch",
     "build": "webpack",
     "watch": "webpack --watch",
-    "lint": "tslint --project ."
+    "lint": "tslint --project .",
+    "test": "npx http-server ../docs"
   },
   "dependencies": {
     "classnames": "^2.2.6",

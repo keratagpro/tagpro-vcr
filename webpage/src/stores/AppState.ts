@@ -47,10 +47,10 @@ export class AppState {
 				const reader = new FileReader();
 
 				reader.addEventListener('load', () => {
-                                        runInAction(() => {
-					        this.recordingName = file.name;
-					        this.recording = reader.result as string;
-                                        });
+					runInAction(() => {
+						this.recordingName = file.name;
+						this.recording = reader.result as string;
+					});
 				});
 
 				reader.readAsText(file);
