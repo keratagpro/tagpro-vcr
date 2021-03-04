@@ -6,6 +6,10 @@ export function isFrontPage() {
 	return !!document.querySelector('#userscript-home');
 }
 
+export function isTopLevelPage() {
+	return !!document.querySelector('#site-nav');
+}
+
 export function getTagPro() {
 	return new Promise<TagPro>(function(resolve) {
 		waitForTagPro(resolve);

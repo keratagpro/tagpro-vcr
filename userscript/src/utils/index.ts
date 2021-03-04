@@ -2,6 +2,25 @@ type PacketCallback = (time: number, type: string, ...args: any[]) => void;
 
 export const now = () => Date.now();
 
+export function dateToString(d: Date, filename: boolean = false) {
+	const dash = filename ? "" : "-";
+	const space = filename ? "" : " ";
+	const colon = filename ? "" : ":";
+
+	let str =
+		d.getFullYear() + dash +
+		("0" + (d.getMonth() + 1)).slice(-2) + dash +
+		("0" + d.getDate()).slice(-2) + space +
+		("0" + d.getHours()).slice(-2) + colon +
+		("0" + d.getMinutes()).slice(-2);
+
+	if (filename) {
+		str += ("0" + d.getSeconds()).slice(-2);
+	}
+
+	return str;
+}
+
 export function addPacketListeners(socket: SocketIO.Socket, events: string[], onPacket: PacketCallback) {
 	const packetListeners = new Map<string, (...args: any[]) => void>();
 
@@ -36,18 +55,4 @@ export function saveFile(data: any, filename: string, type = 'application/x-ndjs
 	// window.open(url, '_blank');
 
 	URL.revokeObjectURL(url);
-}
-
-export function addLinkToVcr() {
-	const li = document.createElement('li');
-	const link = document.createElement('a');
-
-	link.href = 'VCR_URL';
-	link.target = '_blank';
-	link.innerText = 'VCR';
-
-	li.appendChild(link);
-
-	const nav = document.querySelector('#site-nav > ul');
-	nav.appendChild(li);
 }

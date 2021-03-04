@@ -19,6 +19,7 @@ const plugins = [
 		inject: false
 	}),
 	replace({
+		VCR_VERSION: version,
 		VCR_URL: 'https://bash-tp.github.io/tagpro-vcr/'
 		// VCR_URL: 'http://localhost:8080/'
 	})
@@ -33,7 +34,9 @@ fs.writeFileSync('../docs/tagpro-vcr.meta.js', meta, 'utf8');
 
 const globals = {
 	debug: 'debug',
-	tagpro: 'tagpro'
+	idb: 'idb',
+	tagpro: 'tagpro',
+	tagproConfig: 'tagproConfig'
 };
 
 export default [

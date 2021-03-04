@@ -1,9 +1,14 @@
 // Copied from https://stackoverflow.com/a/48254637
 
-export function stringify(obj) {
+export function stringify(obj: any, isP: boolean = false) {
 	const cache = new Set();
 
-	return JSON.stringify(obj, function (key, value) {
+	return JSON.stringify(obj, function(key, value) {
+		// Avoid incompatibility with the TagPro Player Monitor script
+		if (isP && (key === 'monitor')) {
+			return;
+		}
+
 		if (typeof value === 'object' && value !== null) {
 			if (cache.has(value)) {
 				// Circular reference found
@@ -20,7 +25,5 @@ export function stringify(obj) {
 			cache.add(value);
 		}
 		return value;
-        });
+	});
 }
-
-// ---

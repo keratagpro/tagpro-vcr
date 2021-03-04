@@ -10,9 +10,6 @@
 // @match         *://*.koalabeast.com/*
 // @match         *://*.jukejuice.com/*
 // @match         *://*.newcompte.fr/*
-// @grant         GM_getValue
-// @grant         GM_setValue
-// @grant         GM_listValues
-// @grant         GM_deleteValue
 // @require       https://wzrd.in/standalone/debug@latest
+// @require       https://unpkg.com/idb/build/iife/index-min.js
 // ==/UserScript==

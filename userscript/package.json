@@ -1,6 +1,6 @@
 {
   "name": "tagpro-vcr-userscript",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "npm run watch",
@@ -13,11 +13,14 @@
     "@types/classnames": "^2.2.11",
     "@types/debug": "4.1.5",
     "@types/greasemonkey": "4.0.1",
+    "@types/jquery": "^3.5.5",
+    "@types/jquery.cookie": "^1.4.31",
     "@types/pixi.js": "^4.8.9",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/socket.io": "^2.1.13",
     "debug": "^4.3.1",
+    "idb": "^6.0.0",
     "lodash.template": "^4.5.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.39.0",
