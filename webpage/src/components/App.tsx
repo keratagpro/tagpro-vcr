@@ -2,6 +2,9 @@ import classnames from 'classnames';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
+import Slider, { SliderTooltip } from 'rc-slider';
+import 'rc-slider/assets/index.css'
+
 import { AppState } from '../stores/AppState';
 import * as ProfileSettings from '../utils/ProfileSettings';
 import * as Textures from '../utils/Textures';
@@ -23,6 +26,8 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 	}
 
 	renderInfo() {
+		const { appState } = this.props;
+
 		return (
 			<div className="container grid-sm panel">
 				<div className="panel-header">
@@ -65,11 +70,29 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 							{ProfileSettings.renderProfileCheckbox('disableBallSpin', 'Enable Ball Spin', false)}<br />
 							{ProfileSettings.renderProfileCheckbox('disableParticles', 'Enable Particle Effects', false)}<br />
 							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}<br />
-							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}
+							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHidePerformanceInfo', 'Show FPS', false)}
 						</div>
 						<div className="column col-6">
 							Tile Respawn Warnings:<br />
 							{ProfileSettings.renderTileRespawnSelect()}
+						</div>
+					</div>
+				</div>
+				<div className={`modal modal-sm ${appState.failed ? 'active' : ''}`}>
+					<div className="modal-overlay"></div>
+					<div className="modal-container">
+						<div className="modal-header">
+							<button className="btn btn-clear float-right close-modal" onClick={appState.handleFailed}></button>
+							<div className="modal-title"><b>Invalid Recording</b></div>
+						</div>
+						<div className="modal-body">
+							<div className="content">
+								<p>This file does not contain a valid TagPro VCR recording.</p>
+							</div>
+						</div>
+						<div className="modal-footer">
+							<button className="btn btn-primary close-modal" onClick={appState.handleFailed}>Ok</button>
 						</div>
 					</div>
 				</div>
@@ -95,32 +118,92 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				})}
 				onClick={appState.handleStart}
 			>
-				Start
+				Play
 			</button>
 		);
 	}
 
-	renderStopButton() {
+	renderNavbarStopped() {
 		const { appState } = this.props;
 
 		return (
-			<button
-				className={classnames('btn btn-error', { disabled: !appState.started })}
-				onClick={appState.handleStop}
-			>
-				Stop
-			</button>
+			<div className="form-horizontal">
+				{this.renderUploadLabel(appState.recordingName)}
+				<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />{' '}
+
+				{this.renderStartButton()}
+			</div>
+		);
+	}
+
+	renderNavbarLoading() {
+		return (
+			<div className="form-horizontal">
+				Loading...
+			</div>
+		);
+	}
+
+	renderNavbarPlaying() {
+		const { appState } = this.props;
+
+		const fmt = (t: number) => {
+			if (appState.initialState === TagPro.State.NotStarted && t < appState.startPacket[0]) {
+				return '-' + timeFormat(appState.firstTimePacket[2].time - (t - appState.firstTimePacket[0]));
+			} else if (appState.overtimePacket && t >= appState.overtimePacket[0]) {
+				return timeFormat(appState.overtimePacket[2].time + (t - appState.overtimePacket[0])) + " OT";
+			} else {
+				return timeFormat(appState.startPacket[2].time - (t - appState.startPacket[0]));
+			}
+		};
+
+		const { Handle } = Slider;
+		const handle = props => {
+			const { value, dragging, index, ...restProps } = props;
+
+			return (
+				<SliderTooltip
+					prefixCls="rc-slider-tooltip"
+					overlay={fmt(value)}
+					visible={dragging}
+					placement="top"
+					key={index}
+				>
+					<Handle value={value} {...restProps} />
+				</SliderTooltip>
+			);
+		};
+
+		return (
+			<div className="form-horizontal">
+				<span className="control">
+					<Slider
+						min={appState.minTS} max={appState.maxTS-(appState.maxTS % 1000)}
+						value={appState.currentTS} defaultValue={appState.minTS}
+						handle={handle}
+						disabled={appState.finished}
+						onChange={appState.handleSlider}
+						onAfterChange={appState.handleSeek}
+					/>
+					{' '}
+					<button
+						className="btn" type="button"
+						data-state={appState.finished ? "reload" : appState.paused ? "play" : "pause"}
+						onClick={appState.handleButton}
+					/>
+					{' '}
+					<button
+						className="btn" type="button"
+						data-state="stop"
+						onClick={appState.handleStop}
+					/>
+				</span>
+			</div>
 		);
 	}
 
 	render() {
 		const { appState } = this.props;
-
-		const fetchClasses = classnames('form-icon', 'icon', {
-			'loading': appState.fetching,
-			'icon-check': appState.recordingURL && !appState.fetching && appState.urlIsValid === true,
-			'icon-stop': appState.recordingURL && appState.urlIsValid === false
-		});
 
 		return (
 			<div id="container">
@@ -129,21 +212,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 						<span>TagPro VCR</span>
 					</section>
 					<section className="navbar-center">
-						<div className="form-horizontal">
-							{this.renderUploadLabel(appState.recordingName)}
-
-							<span> or </span>
-
-							<div className={classnames('input-group input-inline', { 'has-icon-right': !!appState.recordingURL })}>
-								<input className="form-input" type="text" value={appState.recordingURL} onChange={appState.handleUrlChange} placeholder="Fetch from URL (http://...)" />
-								{appState.recordingURL && <i className={fetchClasses} />}
-							</div>
-							<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />{' '}
-
-							{this.renderStartButton()}{' '}
-
-							{this.renderStopButton()}
-						</div>
+						{appState.started ? (appState.playing ? this.renderNavbarPlaying() : this.renderNavbarLoading()) : this.renderNavbarStopped()}
 					</section>
 					<section className="navbar-section">
 						<a href="https://github.com/bash-tp/tagpro-vcr" className="btn">
@@ -157,3 +226,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		);
 	}
 });
+
+function timeFormat(time: number) {
+	return new Date(time).toISOString().substr(14, 5);
+}

@@ -3,39 +3,34 @@ const now = performance.now.bind(performance);
 // NOTE: Minimum interval in browsers is 4ms.
 const DEFAULT_INTERVAL = 4;
 
+export type Packet = [
+	number,
+	string,
+	any
+];
+
 export default class PacketDataPlayer {
 	loopId;
 	currentIndex: number;
 	currentTime = 0;
-	scheduledPacket: [number, string, any];
+	scheduledPacket: Packet;
 	paused = false;
 	startedAt: number;
-	duration: number;
 
 	constructor(
-		public packets: [number, string, any][],
+		public packets: Packet[],
 		public callback: (ts: number, type: string, data?: any) => void,
 		public doneCallback = () => {}
 	) {
 		this.currentIndex = 0;
-		this.duration = packets[packets.length - 1][0];
-
-		const connect = packets.find(p => p[1] === "connect");
-		if (!connect) {
-			packets.splice(1, 0, [0, "connect", {}]);
-		}
 	}
 
 	seek(to: number) {
-		let index = this.packets.findIndex(([ts]) => ts < to);
-		let packet = this.packets[index];
-
 		const event = { ts: 0, time: 0, state: 0 };
 
-		while (packet) {
-			packet = this.packets[++index];
-
-			this.currentTime = packet[0];
+		for (let index = 0; index < this.packets.length; index++) {
+			const packet = this.packets[index];
+			const nextPacket = this.packets[index + 1];
 
 			if (packet[1] === "time") {
 				event.ts = packet[0];
@@ -43,20 +38,21 @@ export default class PacketDataPlayer {
 				event.state = packet[2].state;
 			}
 
-			if (packet[0] > to) {
+			this.callback(packet[0], packet[1], packet[2]);
+
+			if (nextPacket && nextPacket[0] > to) {
 				const offset = packet[0] - event.ts;
-				const newtime = event.state === 5 ? event.time + offset : event.time - offset;
+				const newtime = (event.state === TagPro.State.Overtime) ? event.time + offset : event.time - offset;
 
 				this.callback(packet[0], "time", { time: newtime, state: event.state, restore: true });
 
-				this.startedAt = now() - packet[0];
-				this.currentIndex = index;
-				this.scheduledPacket = packet;
+				this.currentTime = packet[0];
+				this.startedAt = now() - this.currentTime;
+				this.currentIndex = index + 1;
+				this.scheduledPacket = nextPacket;
 
 				break;
 			}
-
-			this.callback(packet[0], packet[1], packet[2]);
 		}
 	}
 
@@ -79,6 +75,10 @@ export default class PacketDataPlayer {
 	}
 
 	_loop = () => {
+		if (this.paused) {
+			return;
+		}
+
 		this.currentTime = now() - this.startedAt;
 
 		const packet = this.scheduledPacket;
@@ -91,14 +91,6 @@ export default class PacketDataPlayer {
 
 		if (this.currentTime < packet[0]) {
 			return;
-		}
-
-		if (packet[1] === "connect") {
-			const index = this.packets.findIndex(p => p[1] === "end");
-			const endPacket = this.packets[index] || this.packets[this.packets.length-1];
-
-			packet[2] = packet[2] || {};
-			packet[2].duration = endPacket[0];
 		}
 
 		this.callback(packet[0], packet[1], packet[2]);

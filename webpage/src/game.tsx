@@ -2,10 +2,56 @@ import BackgroundPlayer from './utils/BackgroundPlayer';
 import EventedChannel from './utils/EventedChannel';
 import FakeSocket from './utils/FakeSocket';
 
+declare var tagpro: TagPro;
+declare var tagproConfig: TagProConfig;
+declare var $: any;
+
+const save = {
+	sound: null as boolean,
+	time: null as number,
+	uiTimer: null,
+	worldUpdate: null,
+	setTimeout: null
+};
+
+tagpro.ready(() => {
+	tagproConfig.serverHost = "#";
+	tagproConfig.musicHost = "#";
+
+	tagpro.spectator = true;
+	tagpro.ui.spectatorInfo = () => {};
+
+	const performanceOn = !$.cookie("vcrHidePerformanceInfo");
+
+	const performanceInfo = tagpro.ui.performanceInfo;
+	tagpro.ui.performanceInfo = (e, t, n, r) => {
+		tagpro.settings.ui.performanceInfo = performanceOn;
+		(tagpro.ping.avg as any) = "Unknown";
+		performanceInfo(e, t, n, 0);
+	}
+
+	tagpro.socket.on("time", e => {
+		if (e.restore) {
+			tagpro.sound = save.sound;
+		}
+	});
+
+	tagpro.rawSocket.prependListener("end", e => {
+		// Block setTimeout to prevent the default "end" handler
+		// from trying to navigate back to the joiner
+
+		save.setTimeout = window.setTimeout;
+		window.setTimeout = (...args) => { return 0 };
+	});
+
+	tagpro.socket.on("vcr_end", e => {
+		tagpro.state = TagPro.State.Ended;
+	});
+});
+
 const io = {
 	connect() {
 		const player = new BackgroundPlayer();
-		window['player'] = player;
 
 		// NOTE: For testing
 		// player.worker.on('packet', (ts, type, data) => console.log(ts, type, data));
@@ -19,22 +65,68 @@ const io = {
 		channel.on('recording', data => {
 			player.load(data);
 			player.play();
+
+			channel.emit('show-controls');
+
+			const timer = tagpro.ui.timer;
+			tagpro.ui.timer = (...args) => {
+				let time: number;
+
+				if (tagpro.gameEndsAt && !tagpro.overtimeStartedAt) {
+					time = tagpro.gameEndsAt.valueOf() - Date.now();
+				} else if (tagpro.overtimeStartedAt) {
+					time = Date.now() - tagpro.overtimeStartedAt.valueOf();
+				}
+
+				channel.emit('time-sync', { 'state': tagpro.state, 'time': time });
+
+				timer(...args);
+			}
 		});
 
-		window['seek'] = function(to: number) {
+		channel.on('pause', () => {
 			player.pause();
 
-			window['restore_sound'] = window.tagpro.sound;
-			window.tagpro.sound = false;
+			if (tagpro.gameEndsAt && !tagpro.overtimeStartedAt) {
+				save.time = tagpro.gameEndsAt.valueOf() - Date.now();
+			} else if (tagpro.overtimeStartedAt) {
+				save.time = Date.now() - tagpro.overtimeStartedAt.valueOf();
+			}
 
-			window.tagpro.gameEndsAt = null;
-			window.tagpro.overtimeStartedAt = null;
+			save.uiTimer = tagpro.ui.timer;
+			save.worldUpdate = tagpro.world.update;
 
-			const players = window.tagpro.players;
+			tagpro.ui.timer = (...args) => {};
+			tagpro.world.update = (...args) => {};
+		});
+
+		channel.on('unpause', () => {
+			tagpro.ui.timer = save.uiTimer;
+			tagpro.world.update = save.worldUpdate;
+
+			if (tagpro.gameEndsAt && !tagpro.overtimeStartedAt) {
+				tagpro.gameEndsAt = new Date(Date.now() + save.time);
+			} else if (tagpro.overtimeStartedAt) {
+				tagpro.overtimeStartedAt = new Date(Date.now() - save.time);
+			}
+
+			player.play();
+		});
+
+		channel.on('seek', to => {
+			player.pause();
+
+			save.sound = tagpro.sound;
+			tagpro.sound = false;
+
+			tagpro.gameEndsAt = null;
+			tagpro.overtimeStartedAt = null;
+
+			const players = tagpro.players;
 			for (const id in players) {
 				if (players.hasOwnProperty(id)) {
 					players[id].lastSync = {};
-					if (Number(id) !== window.tagpro.playerId) {
+					if (Number(id) !== tagpro.playerId) {
 						player.emit("playerLeft", id);
 					}
 				}
@@ -46,7 +138,11 @@ const io = {
 
 			player.seek(to);
 			player.play();
-		};
+		});
+
+		channel.on('reload', () => {
+			location.reload();
+		});
 
 		return socket;
 	}

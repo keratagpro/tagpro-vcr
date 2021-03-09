@@ -2,6 +2,10 @@ import Cookies from 'js-cookie';
 import React from 'react';
 import Select from 'react-select';
 
+const cookieOptions = {
+	expires: 36500
+};
+
 const textures = {
 	"Classic": {
 		"author": "LuckySpammer",
@@ -476,7 +480,7 @@ function getTextureList() {
 }
 
 function handleTextureChange(selection) {
-	Cookies.set('textures', selection.value);
+	Cookies.set('textures', selection.value, cookieOptions);
 }
 
 export function renderTextureSelect() {

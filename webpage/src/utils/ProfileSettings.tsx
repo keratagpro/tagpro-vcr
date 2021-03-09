@@ -2,10 +2,14 @@ import Cookies from 'js-cookie';
 import React from 'react';
 import Select from 'react-select';
 
+const cookieOptions = {
+	expires: 36500
+};
+
 // Checkboxes:
 
 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
-	Cookies.set(e.target.id, String(!e.target.checked));
+	Cookies.set(e.target.id, String(!e.target.checked), cookieOptions);
 }
 
 export function renderProfileCheckbox(cookieName: string, label: string, defaultValue: boolean) {
@@ -43,7 +47,7 @@ const respawns = [
 ];
 
 function tileRespawnChange(selection) {
-	Cookies.set('tileRespawnWarnings', selection.value);
+	Cookies.set('tileRespawnWarnings', selection.value, cookieOptions);
 }
 
 export function renderTileRespawnSelect() {
