@@ -151,15 +151,22 @@
 	}
 
 	const vcrEnabled = 'vcrEnabled';
+	const vcrSkipSpectator = 'vcrSkipSpectator';
+	const vcrSkipShort = 'vcrShort';
 	const vcrDownload = 'vcrDownload';
 	const vcrWelcome = 'vcrWelcome';
 	class VcrSettings {
 	    constructor() {
 	        this._enabled = true;
+	        this._skipSpectator = true;
+	        this._skipShort = true;
 	        this._download = false;
 	        this._save = 10;
+	        this._shortSeconds = 10;
 	        this._welcome = '';
 	        this._enabled = this.getCookieBoolean(vcrEnabled, this._enabled);
+	        this._skipSpectator = this.getCookieBoolean(vcrSkipSpectator, this._skipSpectator);
+	        this._skipShort = this.getCookieBoolean(vcrSkipShort, this._skipShort);
 	        this._download = this.getCookieBoolean(vcrDownload, this._download);
 	        this._welcome = this.getCookieString(vcrWelcome, this._welcome);
 	    }
@@ -176,9 +183,14 @@
 	    }
 	    get enabled() { return this._enabled; }
 	    set enabled(enabled) { this.setCookie(vcrEnabled, enabled); this._enabled = enabled; }
+	    get skipSpectator() { return this._skipSpectator; }
+	    set skipSpectator(skipSpectator) { this.setCookie(vcrSkipSpectator, skipSpectator); this._skipSpectator = skipSpectator; }
+	    get skipShort() { return this._skipShort; }
+	    set skipShort(skipShort) { this.setCookie(vcrSkipShort, skipShort); this._skipShort = skipShort; }
 	    get download() { return this._download; }
 	    set download(download) { this.setCookie(vcrDownload, download); this._download = download; }
 	    get save() { return this._save; }
+	    get shortSeconds() { return this._shortSeconds; }
 	    get welcome() { return this._welcome; }
 	    set welcome(version) { this.setCookie(vcrWelcome, version); this._welcome = version; }
 	}
@@ -244,13 +256,19 @@
 	        const vcrTab = document.querySelector('#nav-vcr');
 	        let newHTML;
 	        const vcrEnabledChecked = this.settings.enabled ? "checked" : "";
+	        const vcrSkipSpectatorChecked = this.settings.skipSpectator ? "checked" : "";
+	        const vcrSkipShortChecked = this.settings.skipShort ? "checked" : "";
 	        const vcrDownloadChecked = this.settings.download ? "checked" : "";
 	        const vcrSaveChecked = this.settings.download ? "" : "checked";
 	        const settings = `
 			<p>&nbsp;</p>
 			<div class="row form-group">
-				<h4 class="header-title">Settings (reload page after changing)</h4>
-				<input id="vcrEnabled" type="checkbox" ${vcrEnabledChecked} /><label class="checkbox-inline" for="vcrEnabled">Recorder enabled (save new games)</label><br /><br />
+				<h4 class="header-title">Settings</h4>
+
+				<input id="vcrEnabled" type="checkbox" ${vcrEnabledChecked} /><label class="checkbox-inline" for="vcrEnabled">Recorder enabled (save new games)</label><br />
+				<input id="vcrSkipSpectator" type="checkbox" ${vcrSkipSpectatorChecked} /><label class="checkbox-inline" for="vcrSkipSpectator">Don't save games where I am a spectator</label><br />
+				<input id="vcrSkipShort" type="checkbox" ${vcrSkipShortChecked} /><label class="checkbox-inline" for="vcrSkipShort">Don't save short games (&lt; ${this.settings.shortSeconds} seconds)</label><br /><br />
+
 				<input id="vcrSave" type="radio" name="vcrDownloadRadio" value="false" ${vcrSaveChecked} /><label class="radio-inline" for="vcrSave">Save game files here in the browser</label><br />
 				<input id="vcrDownload" type="radio" name="vcrDownloadRadio" value="true" ${vcrDownloadChecked} /><label class="radio-inline" for="vcrDownload">Download game files after each game</label>
 			</div>
@@ -305,28 +323,31 @@
 				</table>
 			`;
 	            newHTML = `
-				${playButton}
-
 				<div class="row form-group">
-					Your ${this.storage.maxGames} most recent games will be stored in the browser.
-					You can download a game file from the list. Then click the button above to
-					visit the player website, and upload your game file to watch the replay.
+					<h2>TagPro VCR</h2>
+					<ul style="list-style: disc outside; margin-left: 2rem;">
+						<li>Your ${this.storage.maxGames} most recent games will be stored in the browser.</li>
+						<li>You can download a game file from the list.</li>
+						<li>Then click the button below to visit the player website, and upload your game file to watch the replay.</li>
+					</ul>
 				</div>
 
+				${playButton}
 				${table}
 				${settings}
 			`;
 	        }
 	        else {
 	            newHTML = `
-				${playButton}
-
 				<div class="row form-group">
-					Game files will automatically be downloaded after each game.
-					Click the button to visit the player website, and upload a
-					game file to watch the replay.
+					<h2>TagPro VCR</h2>
+					<ul style="list-style: disc outside; margin-left: 2rem;">
+						<li>Game files will automatically be downloaded after each game.</li>
+						<li>Click the button below to visit the player website, and upload a game file to watch the replay.</li>
+					</ul>
 				</div>
 
+				${playButton}
 				${settings}
 			`;
 	        }
@@ -335,6 +356,8 @@
 	            link.addEventListener('click', this.downloadFile.bind(this));
 	        });
 	        document.querySelector('#vcrEnabled').addEventListener('click', this.setEnabled.bind(this));
+	        document.querySelector('#vcrSkipSpectator').addEventListener('click', this.setSkipSpectator.bind(this));
+	        document.querySelector('#vcrSkipShort').addEventListener('click', this.setSkipShort.bind(this));
 	        document.querySelector('#vcrDownload').addEventListener('click', this.setDownload.bind(this));
 	        document.querySelector('#vcrSave').addEventListener('click', this.setDownload.bind(this));
 	        activeTab.classList.remove('active-tab');
@@ -351,6 +374,14 @@
 	    setEnabled(ev) {
 	        const target = ev.target;
 	        this.settings.enabled = target.checked;
+	    }
+	    setSkipSpectator(ev) {
+	        const target = ev.target;
+	        this.settings.skipSpectator = target.checked;
+	    }
+	    setSkipShort(ev) {
+	        const target = ev.target;
+	        this.settings.skipShort = target.checked;
 	    }
 	    setDownload(ev) {
 	        const target = ev.target;
@@ -455,6 +486,12 @@
 	        listeners.cancel();
 	        recorder.record(end, 'recorder-summary', game);
 	        const data = await recorder.end();
+	        if (settings.skipSpectator && (game.team === 'Spectator')) {
+	            return;
+	        }
+	        if (settings.skipShort && (game.duration < (settings.shortSeconds * 1000))) {
+	            return;
+	        }
 	        if (settings.download) {
 	            const timestamp = dateToString(start, true);
 	            saveFile(data, `tagpro-recording-${timestamp}.ndjson`);

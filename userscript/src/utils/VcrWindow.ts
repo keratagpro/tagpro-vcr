@@ -77,14 +77,20 @@ export default class VcrWindow {
 		let newHTML: string;
 
 		const vcrEnabledChecked = this.settings.enabled ? "checked" : "";
+		const vcrSkipSpectatorChecked = this.settings.skipSpectator ? "checked" : "";
+		const vcrSkipShortChecked = this.settings.skipShort ? "checked" : "";
 		const vcrDownloadChecked = this.settings.download ? "checked" : "";
 		const vcrSaveChecked = this.settings.download ? "" : "checked";
 
 		const settings = `
 			<p>&nbsp;</p>
 			<div class="row form-group">
-				<h4 class="header-title">Settings (reload page after changing)</h4>
-				<input id="vcrEnabled" type="checkbox" ${vcrEnabledChecked} /><label class="checkbox-inline" for="vcrEnabled">Recorder enabled (save new games)</label><br /><br />
+				<h4 class="header-title">Settings</h4>
+
+				<input id="vcrEnabled" type="checkbox" ${vcrEnabledChecked} /><label class="checkbox-inline" for="vcrEnabled">Recorder enabled (save new games)</label><br />
+				<input id="vcrSkipSpectator" type="checkbox" ${vcrSkipSpectatorChecked} /><label class="checkbox-inline" for="vcrSkipSpectator">Don't save games where I am a spectator</label><br />
+				<input id="vcrSkipShort" type="checkbox" ${vcrSkipShortChecked} /><label class="checkbox-inline" for="vcrSkipShort">Don't save short games (&lt; ${this.settings.shortSeconds} seconds)</label><br /><br />
+
 				<input id="vcrSave" type="radio" name="vcrDownloadRadio" value="false" ${vcrSaveChecked} /><label class="radio-inline" for="vcrSave">Save game files here in the browser</label><br />
 				<input id="vcrDownload" type="radio" name="vcrDownloadRadio" value="true" ${vcrDownloadChecked} /><label class="radio-inline" for="vcrDownload">Download game files after each game</label>
 			</div>
@@ -146,27 +152,30 @@ export default class VcrWindow {
 			`;
 
 			newHTML = `
-				${playButton}
-
 				<div class="row form-group">
-					Your ${this.storage.maxGames} most recent games will be stored in the browser.
-					You can download a game file from the list. Then click the button above to
-					visit the player website, and upload your game file to watch the replay.
+					<h2>TagPro VCR</h2>
+					<ul style="list-style: disc outside; margin-left: 2rem;">
+						<li>Your ${this.storage.maxGames} most recent games will be stored in the browser.</li>
+						<li>You can download a game file from the list.</li>
+						<li>Then click the button below to visit the player website, and upload your game file to watch the replay.</li>
+					</ul>
 				</div>
 
+				${playButton}
 				${table}
 				${settings}
 			`;
 		} else {
 			newHTML = `
-				${playButton}
-
 				<div class="row form-group">
-					Game files will automatically be downloaded after each game.
-					Click the button to visit the player website, and upload a
-					game file to watch the replay.
+					<h2>TagPro VCR</h2>
+					<ul style="list-style: disc outside; margin-left: 2rem;">
+						<li>Game files will automatically be downloaded after each game.</li>
+						<li>Click the button below to visit the player website, and upload a game file to watch the replay.</li>
+					</ul>
 				</div>
 
+				${playButton}
 				${settings}
 			`;
 		}
@@ -178,6 +187,8 @@ export default class VcrWindow {
 		});
 
 		document.querySelector('#vcrEnabled').addEventListener('click', this.setEnabled.bind(this));
+		document.querySelector('#vcrSkipSpectator').addEventListener('click', this.setSkipSpectator.bind(this));
+		document.querySelector('#vcrSkipShort').addEventListener('click', this.setSkipShort.bind(this));
 		document.querySelector('#vcrDownload').addEventListener('click', this.setDownload.bind(this));
 		document.querySelector('#vcrSave').addEventListener('click', this.setDownload.bind(this));
 
@@ -198,6 +209,16 @@ export default class VcrWindow {
 	private setEnabled(ev: MouseEvent) {
 		const target = ev.target as HTMLInputElement;
 		this.settings.enabled = target.checked;
+	}
+
+	private setSkipSpectator(ev: MouseEvent) {
+		const target = ev.target as HTMLInputElement;
+		this.settings.skipSpectator = target.checked;
+	}
+
+	private setSkipShort(ev: MouseEvent) {
+		const target = ev.target as HTMLInputElement;
+		this.settings.skipShort = target.checked;
 	}
 
 	private setDownload(ev: MouseEvent) {

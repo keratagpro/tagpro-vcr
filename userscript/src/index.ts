@@ -129,6 +129,14 @@ function startRecording(tp: TagPro) {
 
 		const data = await recorder.end();
 
+		if (settings.skipSpectator && (game.team === 'Spectator')) {
+			return;
+		}
+
+		if (settings.skipShort && (game.duration < (settings.shortSeconds * 1000))) {
+			return;
+		}
+
 		if (settings.download) {
 			const timestamp = utils.dateToString(start, true);
 			utils.saveFile(data, `tagpro-recording-${timestamp}.ndjson`);
