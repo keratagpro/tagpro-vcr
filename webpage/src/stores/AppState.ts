@@ -8,9 +8,12 @@ export class AppState {
 
 	recording = localStorage.getItem('recording');
 	recordingName = localStorage.getItem('recordingName');
+	recordingURL = '';
 
 	selectedFile: File = undefined;
 	packets: Packet[] = undefined;
+	fetching = false;
+	urlIsValid = undefined;
 	failed = false;
 	started = false;
 	playing = false;
@@ -57,6 +60,43 @@ export class AppState {
 			}
 		);
 
+		reaction(
+			() => this.recordingURL,
+			url => {
+				if (!this.recordingURL) {
+					return;
+				}
+
+				this.fetching = true;
+
+				fetch(url)
+					.then(r => {
+						if (!r.ok) {
+							throw r;
+						} else {
+							return r.text();
+						}
+					})
+					.then(text => {
+						runInAction(() => {
+							this.recording = text;
+							this.fetching = false;
+							this.urlIsValid = true;
+						});
+					})
+					.catch(err => {
+						runInAction(() => {
+							this.recording = undefined;
+							this.fetching = false;
+							this.urlIsValid = false;
+						});
+					});
+			},
+			{
+				delay: 1000
+			}
+		);
+
 		reaction(() => this.recording, localStore(this, 'recording'));
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
 	}
@@ -68,6 +108,14 @@ export class AppState {
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
 		this.selectedFile = ev.target.files[0];
 		ev.target.value = '';
+	}
+
+	handleUrlChange(ev: React.ChangeEvent<HTMLInputElement>) {
+		this.recordingURL = ev.target.value;
+		this.selectedFile = undefined;
+
+		this.urlIsValid = undefined;
+		this.fetching = false;
 	}
 
 	handleRequestRecording() {
