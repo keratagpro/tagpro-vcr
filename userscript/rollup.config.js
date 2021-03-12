@@ -33,7 +33,6 @@ const meta = renderTemplate('src/templates/meta.tpl.js', { version });
 fs.writeFileSync('../docs/tagpro-vcr.meta.js', meta, 'utf8');
 
 const globals = {
-	debug: 'debug',
 	idb: 'idb',
 	tagpro: 'tagpro',
 	tagproConfig: 'tagproConfig'

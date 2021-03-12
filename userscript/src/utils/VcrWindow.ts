@@ -56,6 +56,11 @@ export default class VcrWindow {
 				Previous version: ${previous}
 			</p>
 
+			<p><u>Version 1.0.1</u></p>
+			<ul class="bullet-list">
+				<li>Eliminate a dependency on a debugging library which isn't loading correctly.</li>
+			</ul>
+
 			<p><u>Version 1.0.0</u></p>
 			<ul class="bullet-list">
 				<li>Games are now saved in the browser by default.</li>

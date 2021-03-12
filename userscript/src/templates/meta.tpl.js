@@ -10,6 +10,5 @@
 // @match         *://*.koalabeast.com/*
 // @match         *://*.jukejuice.com/*
 // @match         *://*.newcompte.fr/*
-// @require       https://wzrd.in/standalone/debug@latest
 // @require       https://unpkg.com/idb/build/iife/index-min.js
 // ==/UserScript==

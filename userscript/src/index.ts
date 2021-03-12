@@ -1,4 +1,3 @@
-import createDebug from 'debug';
 import tagpro from 'tagpro';
 
 import * as utils from './utils';
@@ -8,8 +7,9 @@ import { isInGame, isTopLevelPage, readyAsync } from './utils/tagpro';
 import VcrSettings from './utils/VcrSettings';
 import VcrWindow from './utils/VcrWindow';
 
-const debug = createDebug('vcr');
-debug.enabled = true;
+function debug(...args) {
+	console.log("TagPro VCR:", ...args);
+}
 
 const settings = new VcrSettings();
 let storage: GameStorage;
