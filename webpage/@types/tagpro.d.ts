@@ -254,7 +254,7 @@ declare namespace TagPro {
 			spectatorInfo: boolean;
 			systemChat: boolean;
 			teamChat: boolean;
-			teamNames: boolean;
+			teamNames: string;
 		};
 	}
 

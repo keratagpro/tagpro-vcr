@@ -1,7 +1,20 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
+import React from 'react';
 
 import EventedChannel from '../utils/EventedChannel';
 import { Packet } from '../utils/PacketDataPlayer';
+
+const fetchPatterns = [
+	new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$')
+];
+
+export enum Modals {
+	NONE,
+	FAILED,
+	FORBIDDEN,
+	FETCHING,
+	LAUNCH
+}
 
 export class AppState {
 	channel: EventedChannel;
@@ -12,9 +25,10 @@ export class AppState {
 
 	selectedFile: File = undefined;
 	packets: Packet[] = undefined;
+	modal = Modals.NONE;
+	settings = false;
 	fetching = false;
 	urlIsValid = undefined;
-	failed = false;
 	started = false;
 	playing = false;
 	paused = false;
@@ -82,6 +96,10 @@ export class AppState {
 							this.recording = text;
 							this.fetching = false;
 							this.urlIsValid = true;
+
+							if (this.modal === Modals.FETCHING) {
+								this.modal = Modals.LAUNCH;
+							}
 						});
 					})
 					.catch(err => {
@@ -89,6 +107,10 @@ export class AppState {
 							this.recording = undefined;
 							this.fetching = false;
 							this.urlIsValid = false;
+
+							if (this.modal === Modals.FETCHING) {
+								this.modal = Modals.FAILED;
+							}
 						});
 					});
 			},
@@ -99,10 +121,50 @@ export class AppState {
 
 		reaction(() => this.recording, localStore(this, 'recording'));
 		reaction(() => this.recordingName, localStore(this, 'recordingName'));
+
+		this.checkHash();
+		window.addEventListener('hashchange', this.hashChange);
+	}
+
+	checkHash() {
+		const hash = location.hash;
+
+		if (hash === '#launch') {
+			this.modal = Modals.LAUNCH;
+		}
+
+		if (hash.startsWith('#fetch=')) {
+			const url = hash.substr(7);
+			const valid = !!fetchPatterns.find(p => url.match(p));
+
+			if (valid) {
+				this.modal = Modals.FETCHING;
+
+				this.recording = '';
+				this.recordingName = '';
+				this.recordingURL = url;
+			} else {
+				this.modal = Modals.FORBIDDEN;
+			}
+		}
+
+		location.hash = '';
+	}
+
+	hashChange() {
+		const hash = location.hash;
+
+		if (hash !== '' && hash !== '#') {
+			location.reload();
+		}
 	}
 
 	isEggBall() {
 		return this.packets.find(p => p[1] === "eggBall");
+	}
+
+	handleSettings() {
+		this.settings = !this.settings;
 	}
 
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
@@ -171,11 +233,18 @@ export class AppState {
 		}
 	}
 
+	handleDismissModal() {
+		this.modal = Modals.NONE;
+	}
+
 	handleStart() {
+		this.modal = Modals.NONE;
+
 		if (!this.recording) {
 			return;
 		}
 
+		this.settings = false;
 		let failed = false;
 
 		try {
@@ -194,17 +263,13 @@ export class AppState {
 		}
 
 		if (failed) {
-			this.failed = true;
+			this.modal = Modals.FAILED;
 			this.recording = undefined;
 			this.recordingName = undefined;
 			return;
 		}
 
 		this.started = true;
-	}
-
-	handleFailed() {
-		this.failed = false;
 	}
 
 	handleStop() {

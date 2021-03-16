@@ -46,6 +46,14 @@ ol, ul {
 	height: 100%;
 }
 
+.btn {
+	vertical-align: initial;
+}
+
+.modal.active .modal-overlay, .modal:target .modal-overlay {
+	background: rgba(0, 0, 0, 0.5);
+}
+
 .control .rc-slider {
 	display: inline-block;
 	width: 20rem;
@@ -95,6 +103,7 @@ ol, ul {
 	width: 1.8rem;
 	height: 1.8rem;
 	line-height: 1rem;
+	vertical-align: middle;
 }
 
 .control button:hover {

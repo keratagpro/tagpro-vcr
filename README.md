@@ -31,3 +31,6 @@ The VCR webpage runs the original game client code (`global-game.js`), but repla
 *   Run `lerna run build` (runs `npm run build` in sub-packages)
 
 To automatically recompile when source files change, `cd` to sub-package directories and run `npm run watch`.
+To test the webpage component, `cd webpage` and run `npm run test` to start a webserver on `http://localhost:8080`.
+
+Settings for Visual Studio Code are included in the source tree. If you're using VS Code, the `TSLint` and `es6-string-html` plugins are recommended.

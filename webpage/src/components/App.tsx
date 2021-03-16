@@ -5,9 +5,10 @@ import * as React from 'react';
 import Slider, { SliderTooltip } from 'rc-slider';
 import 'rc-slider/assets/index.css'
 
-import { AppState } from '../stores/AppState';
+import { AppState, Modals } from '../stores/AppState';
 import * as ProfileSettings from '../utils/ProfileSettings';
 import * as Textures from '../utils/Textures';
+import Modal from './Modal';
 
 import './App.css';
 
@@ -25,8 +26,98 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
 	}
 
+	renderSettings() {
+		const { appState } = this.props;
+
+		return (
+			<div className="container grid-sm panel">
+				<div className="panel-header">
+					<div className="panel-title h5">TagPro VCR Playback Settings</div>
+				</div>
+				<div className="panel-body">
+					<div className="columns">
+						<div className="column col-6">
+							<h6>Chat</h6>
+							{ProfileSettings.renderProfileCheckbox('vcrHideAllChat', 'Show All Chat', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideTeamChat', 'Show Team Chat', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideGroupChat', 'Show Group Chat', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideSystemChat', 'Show System Chat', false)}<br />
+							<p />
+							<h6>HUD</h6>
+							{ProfileSettings.renderProfileCheckbox('vcrHideNames', 'Show Player Names', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideDegrees', 'Show Player Degrees', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideMatchState', 'Show Time, Score & Flags', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHidePerformanceInfo', 'Show FPS', false)}<br />
+							<p />
+							<h6>Video Settings</h6>
+							{ProfileSettings.renderProfileCheckbox('disableParticles', 'Enable Particle Effects', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}<br />
+						</div>
+						<div className="column col-6">
+							<h6>EggBall</h6>
+							{ProfileSettings.renderProfileCheckbox('vcrHideRaptors', 'Show Raptors', false)}<br />
+							<p />
+							<h6>Other</h6>
+							{ProfileSettings.renderProfileCheckbox('disableBallSpin', 'Enable Ball Spin', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideTeamNames', 'Show Custom Team Names', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('vcrHideFlair', 'Show Flair', false)}<br />
+							<p />
+							Tile Respawn Warnings:<br />
+							{ProfileSettings.renderTileRespawnSelect()}
+						</div>
+					</div>
+					<p />
+					<div>
+						<button className="btn centered" onClick={appState.handleSettings}>Done</button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	renderInfo() {
 		const { appState } = this.props;
+
+		const okButton = (
+			<button className="btn btn-primary close-modal"
+				onClick={appState.handleDismissModal}>Ok</button>
+		);
+
+		const failedModal =
+			<Modal
+				title="Invalid Recording"
+				body="This file does not contain a valid TagPro VCR recording."
+				stateVar={appState.modal === Modals.FAILED}
+				closeHandler={appState.handleDismissModal}
+				actionButton={okButton}
+			/>;
+
+		const forbiddenModal =
+			<Modal
+				title="Forbidden"
+				body="Unable to load recordings from this URL."
+				stateVar={appState.modal === Modals.FORBIDDEN}
+				closeHandler={appState.handleDismissModal}
+				actionButton={okButton}
+			/>;
+
+		const loadingModal =
+			<Modal
+				title="Please Wait"
+				body="Loading..."
+				stateVar={appState.modal === Modals.FETCHING}
+				closeHandler={appState.handleDismissModal}
+			/>;
+
+		const launchModal =
+			<Modal
+				title="Ready to Play"
+				body="Your recording has been loaded and is ready to play."
+				stateVar={appState.modal === Modals.LAUNCH}
+				closeHandler={appState.handleDismissModal}
+				actionButton={this.renderStartButton()}
+			/>;
 
 		return (
 			<div className="container grid-sm panel">
@@ -64,38 +155,12 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
 					<div>{Textures.renderTextureSelect()}</div>
 					<p />
-					<h6>Settings</h6>
-					<div className="columns">
-						<div className="column col-6">
-							{ProfileSettings.renderProfileCheckbox('disableBallSpin', 'Enable Ball Spin', false)}<br />
-							{ProfileSettings.renderProfileCheckbox('disableParticles', 'Enable Particle Effects', false)}<br />
-							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}<br />
-							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}<br />
-							{ProfileSettings.renderProfileCheckbox('vcrHidePerformanceInfo', 'Show FPS', false)}
-						</div>
-						<div className="column col-6">
-							Tile Respawn Warnings:<br />
-							{ProfileSettings.renderTileRespawnSelect()}
-						</div>
-					</div>
+					<button className="btn centered" onClick={appState.handleSettings}>More Settings</button>
 				</div>
-				<div className={`modal modal-sm ${appState.failed ? 'active' : ''}`}>
-					<div className="modal-overlay"></div>
-					<div className="modal-container">
-						<div className="modal-header">
-							<button className="btn btn-clear float-right close-modal" onClick={appState.handleFailed}></button>
-							<div className="modal-title"><b>Invalid Recording</b></div>
-						</div>
-						<div className="modal-body">
-							<div className="content">
-								<p>This file does not contain a valid TagPro VCR recording.</p>
-							</div>
-						</div>
-						<div className="modal-footer">
-							<button className="btn btn-primary close-modal" onClick={appState.handleFailed}>Ok</button>
-						</div>
-					</div>
-				</div>
+				{failedModal}
+				{forbiddenModal}
+				{loadingModal}
+				{launchModal}
 			</div>
 		);
 	}
@@ -234,7 +299,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					</section>
 				</header>
 
-				<div id="game-container">{appState.started ? this.renderGame() : this.renderInfo()}</div>
+				<div id="game-container">{appState.started ? this.renderGame() : appState.settings ? this.renderSettings() : this.renderInfo()}</div>
 			</div>
 		);
 	}

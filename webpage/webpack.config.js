@@ -49,5 +49,14 @@ module.exports = [
 		resolve,
 		module: modules,
 		target: 'webworker'
+	},
+	{
+		mode: 'development',
+		entry: {
+			launcher: './src/launcher.ts'
+		},
+		output,
+		resolve,
+		module: modules
 	}
 ];
