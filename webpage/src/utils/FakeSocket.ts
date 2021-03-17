@@ -1,7 +1,7 @@
 import BackgroundPlayer from './BackgroundPlayer';
 
 export default class FakeSocket {
-	constructor(public player: BackgroundPlayer) {
+	constructor(public player: BackgroundPlayer, public onEmit?: (type: string, data: any) => void) {
 	}
 
 	on(type, listener) {
@@ -9,6 +9,10 @@ export default class FakeSocket {
 	}
 
 	emit(type, data) {
+		if (this.onEmit) {
+			this.onEmit(type, data);
+		}
+
 		// this.player.worker.emit(type, data);
 	}
 

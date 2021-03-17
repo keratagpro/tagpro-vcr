@@ -85,7 +85,36 @@ const io = {
 		// player.worker.on('packet', (ts, type, data) => console.log(ts, type, data));
 		// player.worker.on('end', ev => console.log('End!'));
 
-		const socket = new FakeSocket(player);
+		const playerIds = () => {
+			return Object.keys(tagpro.players).map(Number);
+		}
+
+		const onEmit = (type: string, data: any) => {
+			let target: number;
+
+			switch (type) {
+				case 'next':
+				case 'prev':
+					const ids = type === 'next' ? playerIds().reverse() : playerIds();
+					const cur = ids.indexOf(tagpro.playerId);
+					target = ids[cur + 1] ?? ids[0];
+					break;
+
+				case 'redflagcarrier':
+				case 'blueflagcarrier':
+					const flag = type === 'redflagcarrier' ? 2 : 1;
+					const team = type === 'redflagcarrier' ? 1 : 2;
+					target = playerIds().find(id => (tagpro.players[id].flag === flag) ||
+						(tagpro.players[id].flag === 3 && tagpro.players[id].team === team));
+					break;
+			}
+
+			if (target) {
+				player.emit('id', target);
+			}
+		};
+
+		const socket = new FakeSocket(player, onEmit);
 
 		const channel = new EventedChannel('vcr');
 		channel.emit('request-recording');
@@ -150,15 +179,12 @@ const io = {
 			tagpro.gameEndsAt = null;
 			tagpro.overtimeStartedAt = null;
 
-			const players = tagpro.players;
-			for (const id in players) {
-				if (players.hasOwnProperty(id)) {
-					players[id].lastSync = {};
-					if (Number(id) !== tagpro.playerId) {
-						player.emit("playerLeft", id);
-					}
+			playerIds().forEach(id => {
+				tagpro.players[id].lastSync = {};
+				if (id !== tagpro.playerId) {
+					player.emit('playerLeft', id);
 				}
-			}
+			});
 
 			for (let i = 0; i < 10; i++) {
 				player.emit("chat", { from: null, to: "all", message: "\xa0" });
