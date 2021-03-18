@@ -1,14 +1,20 @@
+import * as Penpal from 'penpal';
+
 import * as utils from '.';
 import { GameStorage, VcrGame } from './GameStorage';
-import VcrSettings from './VcrSettings';
+import { Action, VcrSettings } from './VcrSettings';
+
+import './VcrWindow.css';
 
 const version = 'VCR_VERSION';
+const vcrUrl = 'VCR_URL';
 
 export default class VcrWindow {
 	private settings: VcrSettings;
 	private storage: GameStorage;
 	private done: boolean;
 	private games: VcrGame[];
+	private playerWindow: Window;
 
 	constructor(settings: VcrSettings, storage: GameStorage) {
 		this.settings = settings;
@@ -32,11 +38,11 @@ export default class VcrWindow {
 	}
 
 	showVcrWelcomeIfNeeded() {
-		const previous = this.settings.welcome || 'Unknown';
+		const previous = this.settings.get('welcome') || 'Unknown';
 		if (previous === version) return;
 
 		const container = document.querySelector('#userscript-top + .container');
-		container.innerHTML = `
+		container.innerHTML = /*html*/`
 			<h1>Hi there, TagPro VCR User!</h1>
 
 			<p>
@@ -56,6 +62,12 @@ export default class VcrWindow {
 				Previous version: ${previous}
 			</p>
 
+			<p><u>Version 1.1.0</u></p>
+			<ul class="bullet-list">
+				<li>Add the ability to launch replays directly from the browser.</li>
+				<li>Make the number of saved games and the "short game" limit configurable.</li>
+			</ul>
+
 			<p><u>Version 1.0.1</u></p>
 			<ul class="bullet-list">
 				<li>Eliminate a dependency on a debugging library which isn't loading correctly.</li>
@@ -69,7 +81,7 @@ export default class VcrWindow {
 			</ul>
 		`;
 
-		this.settings.welcome = version;
+		this.settings.set('welcome', version);
 	}
 
 	async showVcrWindow() {
@@ -81,34 +93,40 @@ export default class VcrWindow {
 		const vcrTab = document.querySelector('#nav-vcr');
 		let newHTML: string;
 
-		const vcrEnabledChecked = this.settings.enabled ? "checked" : "";
-		const vcrSkipSpectatorChecked = this.settings.skipSpectator ? "checked" : "";
-		const vcrSkipShortChecked = this.settings.skipShort ? "checked" : "";
-		const vcrDownloadChecked = this.settings.download ? "checked" : "";
-		const vcrSaveChecked = this.settings.download ? "" : "checked";
+		const actions: Action[] = [];
 
-		const settings = `
+		const selectSave = this.settings.select('save', [10, 20, 30, 40, 50], actions);
+		const selectShortSeconds = this.settings.select('shortSeconds', [10, 20, 30, 40, 50, 60], actions);
+
+		const checkboxEnabled = this.settings.checkbox('enabled', `Recorder enabled (save new games)`, actions);
+		const checkboxSkipSpectator = this.settings.checkbox('skipSpectator', `Don't save games where I am a spectator`, actions);
+		const checkboxSkipShort = this.settings.checkbox('skipShort', `Don't save short games (&lt; ${selectShortSeconds} seconds)`, actions);
+
+		const radioSave = this.settings.radio('download', `Save ${selectSave} most recent game files here in the browser`, false, actions);
+		const radioDownload = this.settings.radio('download', `Download game files after each game`, true, actions);
+
+		const settings = /*html*/`
 			<p>&nbsp;</p>
 			<div class="row form-group">
 				<h4 class="header-title">Settings</h4>
 
-				<input id="vcrEnabled" type="checkbox" ${vcrEnabledChecked} /><label class="checkbox-inline" for="vcrEnabled">Recorder enabled (save new games)</label><br />
-				<input id="vcrSkipSpectator" type="checkbox" ${vcrSkipSpectatorChecked} /><label class="checkbox-inline" for="vcrSkipSpectator">Don't save games where I am a spectator</label><br />
-				<input id="vcrSkipShort" type="checkbox" ${vcrSkipShortChecked} /><label class="checkbox-inline" for="vcrSkipShort">Don't save short games (&lt; ${this.settings.shortSeconds} seconds)</label><br /><br />
+				${checkboxEnabled}<br />
+				${checkboxSkipSpectator}<br />
+				${checkboxSkipShort}<br /><br />
 
-				<input id="vcrSave" type="radio" name="vcrDownloadRadio" value="false" ${vcrSaveChecked} /><label class="radio-inline" for="vcrSave">Save game files here in the browser</label><br />
-				<input id="vcrDownload" type="radio" name="vcrDownloadRadio" value="true" ${vcrDownloadChecked} /><label class="radio-inline" for="vcrDownload">Download game files after each game</label>
+				${radioSave}<br />
+				${radioDownload}
 			</div>
 		`;
 
-		const playButton = `
+		const playButton = /*html*/`
 			<div class="row form-group">
-				<a class="btn btn-primary" href="VCR_URL" target="_blank">Play Your Recordings</a>
+				<button class="btn btn-primary" id="openPlayer">Play Saved Recordings</button>
 			</div>
 		`;
 
 		if (this.storage) {
-			let table = `
+			let table = /*html*/`
 				<table class="table table-stripped row form-group">
 					<thead>
 						<th>Start</th>
@@ -118,7 +136,7 @@ export default class VcrWindow {
 						<th>Team</th>
 						<th>Name</th>
 						<th>Winner?</th>
-						<th>Download</th>
+						<th>Action</th>
 					</thead>
 					<tbody>
 			`;
@@ -127,7 +145,7 @@ export default class VcrWindow {
 			this.games.forEach((game, idx) => {
 				const duration = new Date(game.duration).toISOString().substr(14, 5);
 
-				table += `
+				table += /*html*/`
 						<tr>
 							<td>${game.start}</td>
 							<td>${game.map}</td>
@@ -137,44 +155,50 @@ export default class VcrWindow {
 							<td>${game.name}</td>
 							<td>${game.winner ? "Yes" : "No"}</td>
 							<td>
-								<a class="btn btn-secondary btn-tiny" href="#" id="vcrFile" data-idx="${idx}">Download</a>
+								<a type="button" id="vcrFile" data-idx="${idx}" class="btn vcr-button vcr-button-download" title="Download"></a>&nbsp;
+								<a type="button" id="vcrPlay" data-idx="${idx}" class="btn vcr-button vcr-button-play" title="Play"></a>
 							</td>
 						</tr>
 				`;
 			});
 
 			if (this.games.length === 0) {
-				table += `
+				table += /*html*/`
 						<tr>
 							<td colspan="8"><i>No games saved yet</i></td>
 						</tr>
 				`;
 			}
 
-			table += `
+			table += /*html*/`
 					</tbody>
 				</table>
 			`;
 
-			newHTML = `
+			const spinner = /*html*/`
+				<div class="vcr-mask vcr-hidden" id="vcrMask"><div class="vcr-mask-inside"></div></div>
+			`;
+
+			newHTML = /*html*/`
 				<div class="row form-group">
 					<h2>TagPro VCR</h2>
-					<ul style="list-style: disc outside; margin-left: 2rem;">
+					<ul class="vcr-list">
 						<li>Your ${this.storage.maxGames} most recent games will be stored in the browser.</li>
-						<li>You can download a game file from the list.</li>
-						<li>Then click the button below to visit the player website, and upload your game file to watch the replay.</li>
+						<li>You can download a game file to save it forever, or launch the player directly from the list.</li>
+						<li>Click the button below to visit the player website, and upload a saved game file to watch the replay.</li>
 					</ul>
 				</div>
 
 				${playButton}
 				${table}
 				${settings}
+				${spinner}
 			`;
 		} else {
-			newHTML = `
+			newHTML = /*html*/`
 				<div class="row form-group">
 					<h2>TagPro VCR</h2>
-					<ul style="list-style: disc outside; margin-left: 2rem;">
+					<ul class="vcr-list">
 						<li>Game files will automatically be downloaded after each game.</li>
 						<li>Click the button below to visit the player website, and upload a game file to watch the replay.</li>
 					</ul>
@@ -187,47 +211,86 @@ export default class VcrWindow {
 
 		container.innerHTML = newHTML;
 
-		document.querySelectorAll('#vcrFile').forEach(link => {
-			link.addEventListener('click', this.downloadFile.bind(this));
-		});
+		document.querySelector('#openPlayer').addEventListener('click', this.openPlayer.bind(this));
 
-		document.querySelector('#vcrEnabled').addEventListener('click', this.setEnabled.bind(this));
-		document.querySelector('#vcrSkipSpectator').addEventListener('click', this.setSkipSpectator.bind(this));
-		document.querySelector('#vcrSkipShort').addEventListener('click', this.setSkipShort.bind(this));
-		document.querySelector('#vcrDownload').addEventListener('click', this.setDownload.bind(this));
-		document.querySelector('#vcrSave').addEventListener('click', this.setDownload.bind(this));
+		document.querySelectorAll('#vcrFile').forEach(link => link.addEventListener('click', this.downloadFile.bind(this)));
+		document.querySelectorAll('#vcrPlay').forEach(link => link.addEventListener('click', this.launchPlayer.bind(this)));
 
-		activeTab.classList.remove('active-tab');
+		actions.forEach(action => action());
+
+		if (activeTab) activeTab.classList.remove('active-tab');
 		vcrTab.classList.add('active-tab');
 	}
 
-	private downloadFile(ev: MouseEvent) {
+	private openPlayer(ev: MouseEvent, extraUrl?: string) {
+		const url = vcrUrl + (extraUrl ?? '');
+
+		if (this.playerWindow && this.playerWindow.window) {
+			this.playerWindow.focus();
+			this.playerWindow.location.href = url;
+		} else {
+			this.playerWindow = window.open(url, '_blank');
+		}
+	}
+
+	private onClickData(ev: MouseEvent) {
 		const target = ev.target as HTMLAnchorElement;
 		const idx = +target.getAttribute("data-idx");
 		const game = this.games[idx];
 		const start = new Date(game.timestamp);
 		const timestamp = utils.dateToString(start, true);
+		const filename = `tagpro-recording-${timestamp}.ndjson`;
 
-		utils.saveFile(game.data, `tagpro-recording-${timestamp}.ndjson`);
+		return {
+			'data': game.data,
+			'filename': filename
+		};
 	}
 
-	private setEnabled(ev: MouseEvent) {
-		const target = ev.target as HTMLInputElement;
-		this.settings.enabled = target.checked;
+	private downloadFile(ev: MouseEvent) {
+		const game = this.onClickData(ev);
+
+		utils.saveFile(game.data, game.filename);
 	}
 
-	private setSkipSpectator(ev: MouseEvent) {
-		const target = ev.target as HTMLInputElement;
-		this.settings.skipSpectator = target.checked;
-	}
+	private launchPlayer(ev: MouseEvent) {
+		const game = this.onClickData(ev);
 
-	private setSkipShort(ev: MouseEvent) {
-		const target = ev.target as HTMLInputElement;
-		this.settings.skipShort = target.checked;
-	}
+		$('#vcrMask').removeClass('vcr-hidden');
 
-	private setDownload(ev: MouseEvent) {
-		const target = ev.target as HTMLInputElement;
-		this.settings.download = (target.value === 'true');
+		const iframe = document.createElement('iframe');
+		iframe.src = vcrUrl + 'launcher.html';
+		iframe.setAttribute('style', 'display: none');
+		document.body.appendChild(iframe);
+
+		const connection = Penpal.connectToChild({ iframe, timeout: 30000 });
+
+		const handleError = reason => {
+			alert('Failed to launch player. Please try downloading your game file ' +
+				'and uploading it to the player website. Reason: ' + reason);
+
+			$('#vcrMask').addClass('vcr-hidden');
+
+			document.body.removeChild(iframe);
+		};
+
+		connection.promise.then
+			(
+				child => {
+					child.game(game.data, game.filename)
+						.then(result => {
+							document.body.removeChild(iframe);
+							$('#vcrMask').addClass('vcr-hidden');
+
+							this.openPlayer(undefined, '#launch');
+						})
+						.catch(reason => handleError(reason));
+				},
+				reason => handleError(reason)
+			)
+		.catch
+			(
+				reason => handleError(reason)
+			);
 	}
 }

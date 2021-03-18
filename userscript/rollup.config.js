@@ -1,9 +1,9 @@
 import fs from 'fs';
 import template from 'lodash.template';
 import commonjs from 'rollup-plugin-commonjs';
-import postcss from 'rollup-plugin-postcss';
 import resolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
+import styles from "rollup-plugin-styles";
 import typescript from 'rollup-typescript';
 
 const { version } = require('./package.json');
@@ -15,9 +15,7 @@ const plugins = [
 	}),
 	commonjs(),
 	typescript(),
-	postcss({
-		inject: false
-	}),
+	styles(),
 	replace({
 		VCR_VERSION: version,
 		VCR_URL: 'https://bash-tp.github.io/tagpro-vcr/'
@@ -34,6 +32,7 @@ fs.writeFileSync('../docs/tagpro-vcr.meta.js', meta, 'utf8');
 
 const globals = {
 	idb: 'idb',
+	penpal: 'Penpal',
 	tagpro: 'tagpro',
 	tagproConfig: 'tagproConfig'
 };

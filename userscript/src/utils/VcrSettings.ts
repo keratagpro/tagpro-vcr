@@ -1,58 +1,131 @@
 import tagproConfig from 'tagproConfig';
 
-const vcrEnabled = 'vcrEnabled';
-const vcrSkipSpectator = 'vcrSkipSpectator';
-const vcrSkipShort = 'vcrShort';
-const vcrDownload = 'vcrDownload';
-const vcrWelcome = 'vcrWelcome';
+interface Settings {
+	enabled: boolean,
+	skipSpectator: boolean,
+	skipShort: boolean,
+	download: boolean,
+	save: number,
+	shortSeconds: number,
+	welcome: string
+}
 
-export default class VcrSettings {
-	private _enabled = true;
-	private _skipSpectator = true;
-	private _skipShort = true;
-	private _download = false;
-	private _save = 10;
-	private _shortSeconds = 10;
-	private _welcome = '';
+export type Action = () => void;
 
-	private getCookieBoolean(name: string, dflt: boolean) {
-		const cookie = $.cookie(name);
-		return cookie === 'true' ? true : cookie === 'false' ? false : dflt;
-	}
+function cookieName(name: string) {
+	return 'vcr' + name.charAt(0).toUpperCase() + name.slice(1);
+}
 
-	private getCookieString(name: string, dflt: string) {
-		const cookie = $.cookie(name);
-		return cookie ?? dflt;
-	}
-
-	private setCookie(name: string, value: any) {
-		$.cookie(name, String(value), { expires: 36500, path: '/', domain: tagproConfig.cookieHost });
+export class VcrSettings {
+	private settings: Settings = {
+		enabled: true,
+		skipSpectator: true,
+		skipShort: true,
+		download: false,
+		save: 10,
+		shortSeconds: 10,
+		welcome: ''
 	}
 
 	constructor() {
-		this._enabled = this.getCookieBoolean(vcrEnabled, this._enabled);
-		this._skipSpectator = this.getCookieBoolean(vcrSkipSpectator, this._skipSpectator);
-		this._skipShort = this.getCookieBoolean(vcrSkipShort, this._skipShort);
-		this._download = this.getCookieBoolean(vcrDownload, this._download);
-		this._welcome = this.getCookieString(vcrWelcome, this._welcome);
+		Object.keys(this.settings).forEach(name => {
+			// Note: $.cookie returns only string values because
+			// the homepage doesn't set $.cookie.json
+
+			const cookie = $.cookie(cookieName(name));
+
+			if (typeof cookie !== 'undefined') {
+				try {
+					this.settings[name] = JSON.parse(cookie);
+				} catch {
+					this.settings[name] = cookie;
+				}
+			}
+		});
 	}
 
-	get enabled() { return this._enabled; }
-	set enabled(enabled: boolean) { this.setCookie(vcrEnabled, enabled); this._enabled = enabled; }
+	get<T extends keyof Settings>(name: T): Settings[T] {
+		return this.settings[name];
+	}
 
-	get skipSpectator() { return this._skipSpectator }
-	set skipSpectator(skipSpectator: boolean) { this.setCookie(vcrSkipSpectator, skipSpectator); this._skipSpectator = skipSpectator; }
+	set<T extends keyof Settings>(name: T, value: Settings[T]) {
+		$.cookie(cookieName(name), String(value), { expires: 36500, path: '/', domain: tagproConfig.cookieHost });
+		this.settings[name] = value;
+	}
 
-	get skipShort() { return this._skipShort }
-	set skipShort(skipShort: boolean) { this.setCookie(vcrSkipShort, skipShort); this._skipShort = skipShort; }
+	checkbox<T extends keyof Settings>(name: T, label: string, actionList: Action[]) {
+		const checked = this.get(name) ? "checked" : "";
+		const id = `vcrCheckbox_${name}`;
 
-	get download() { return this._download; }
-	set download(download: boolean) { this.setCookie(vcrDownload, download); this._download = download; }
+		actionList.push(() => {
+			document.querySelector(`#${id}`).addEventListener('click', this.checkboxHandler.bind(this));
+		});
 
-	get save() { return this._save; }
+		return /*html*/`
+			<input id="${id}" type="checkbox" name="${name}" ${checked} /><label class="checkbox-inline" for="${id}">${label}</label>
+		`;
+	}
 
-	get shortSeconds() { return this._shortSeconds; }
+	private checkboxHandler(ev: MouseEvent) {
+		const target = ev.target as HTMLInputElement;
+		const name = target.name as keyof Settings;
 
-	get welcome() { return this._welcome; }
-	set welcome(version: string) { this.setCookie(vcrWelcome, version); this._welcome = version; }
+		this.set(name, target.checked);
+	}
+
+	radio<T extends keyof Settings>(name: T, label: string, value: Settings[T], actionList: Action[]) {
+		const checked = this.get(name) === value ? "checked" : "";
+		const id = `vcrRadio_${name}_${value}`
+
+		actionList.push(() => {
+			document.querySelector(`#${id}`).addEventListener('click', this.radioHandler.bind(this));
+		});
+
+		return /*html*/`
+			<input id="${id}" type="radio" name="${name}" value="${value}" ${checked} /><label class="radio-inline" for="${id}">${label}</label>
+		`;
+	}
+
+	private radioHandler(ev: MouseEvent) {
+		const target = ev.target as HTMLInputElement;
+		const name = target.name as keyof Settings;
+		const value = target.value;
+
+		this.set(name, value);
+	}
+
+	select<T extends keyof Settings>(name: T, values: Settings[T][], actionList: Action[]) {
+		const value = this.get(name);
+		const id = `vcrSelect_${name}`;
+
+		actionList.push(() => {
+			document.querySelector(`#${id}`).addEventListener('change', this.selectHandler.bind(this));
+		});
+
+		let select = /*html*/`
+			<select id="${id}" name="${name}" class="vcr-select">
+		`;
+
+		values.forEach(v => {
+			const selected = v === value ? "selected" : "";
+
+			select += /*html*/`
+				<option value="${v}" ${selected}>${v}</option>
+			`;
+		})
+
+		select += /*html*/`
+			</select>
+		`;
+
+		return select;
+	}
+
+	private selectHandler(ev: MouseEvent) {
+		const target = ev.target as HTMLSelectElement;
+		const name = target.name as keyof Settings;
+		const value = target.selectedOptions[0].value;
+
+		this.set(name, value);
+	}
 }

@@ -4,7 +4,7 @@ import * as utils from './utils';
 import BasicRecorder from './utils/BasicRecorder';
 import { GameStorage, VcrGame } from './utils/GameStorage';
 import { isInGame, isTopLevelPage, readyAsync } from './utils/tagpro';
-import VcrSettings from './utils/VcrSettings';
+import { VcrSettings } from './utils/VcrSettings';
 import VcrWindow from './utils/VcrWindow';
 
 function debug(...args) {
@@ -13,8 +13,8 @@ function debug(...args) {
 
 const settings = new VcrSettings();
 let storage: GameStorage;
-if (!settings.download) {
-	storage = new GameStorage(settings.save);
+if (!settings.get('download')) {
+	storage = new GameStorage(settings.get('save'));
 }
 
 const vcrWindow = new VcrWindow(settings, storage);
@@ -22,7 +22,7 @@ const vcrWindow = new VcrWindow(settings, storage);
 (async function() {
 	await readyAsync(tagpro);
 
-	if (isInGame(tagpro) && settings.enabled) {
+	if (isInGame(tagpro) && settings.get('enabled')) {
 		debug('Recording.');
 		startRecording(tagpro);
 	} else if (isTopLevelPage()) {
@@ -129,15 +129,15 @@ function startRecording(tp: TagPro) {
 
 		const data = await recorder.end();
 
-		if (settings.skipSpectator && (game.team === 'Spectator')) {
+		if (settings.get('skipSpectator') && (game.team === 'Spectator')) {
 			return;
 		}
 
-		if (settings.skipShort && (game.duration < (settings.shortSeconds * 1000))) {
+		if (settings.get('skipShort') && (game.duration < (settings.get('shortSeconds') * 1000))) {
 			return;
 		}
 
-		if (settings.download) {
+		if (settings.get('download')) {
 			const timestamp = utils.dateToString(start, true);
 			utils.saveFile(data, `tagpro-recording-${timestamp}.ndjson`);
 		} else {

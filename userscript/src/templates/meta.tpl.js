@@ -11,4 +11,5 @@
 // @match         *://*.jukejuice.com/*
 // @match         *://*.newcompte.fr/*
 // @require       https://unpkg.com/idb/build/iife/index-min.js
+// @require       https://unpkg.com/penpal/dist/penpal.min.js
 // ==/UserScript==

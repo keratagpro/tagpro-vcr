@@ -1,0 +1,12 @@
+{
+	"editor.detectIndentation": true,
+	"editor.formatOnSave": false,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+	"javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+	"typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false
+}
