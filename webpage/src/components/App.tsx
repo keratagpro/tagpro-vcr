@@ -5,7 +5,7 @@ import * as React from 'react';
 import Slider, { SliderTooltip } from 'rc-slider';
 import 'rc-slider/assets/index.css'
 
-import { AppState, Modals } from '../stores/AppState';
+import { AppState, GameTypes, Modals } from '../stores/AppState';
 import * as ProfileSettings from '../utils/ProfileSettings';
 import * as Textures from '../utils/Textures';
 import Modal from './Modal';
@@ -16,12 +16,18 @@ interface IProps {
 	appState: AppState;
 }
 
+const gameFiles = {
+	[GameTypes.NORMAL]: 'game.html',
+	[GameTypes.EGGBALL]: 'game-egg.html',
+	[GameTypes.DRAGON_TOWER]: 'game-dragon-tower.html'
+}
+
 export const App = observer(class AppClass extends React.Component<IProps> {
 	renderGame() {
 		const { appState } = this.props;
 
-		const eggBall = appState.isEggBall();
-		const gameSrc = eggBall ? "game-egg.html" : "game.html";
+		const gameType = appState.gameType();
+		const gameSrc = gameFiles[gameType];
 
 		return <iframe id="game-frame" src={gameSrc} frameBorder="0" />;
 	}

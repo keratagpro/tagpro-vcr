@@ -8,6 +8,12 @@ const fetchPatterns = [
 	new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$')
 ];
 
+export enum GameTypes {
+	NORMAL,
+	EGGBALL,
+	DRAGON_TOWER
+}
+
 export enum Modals {
 	NONE,
 	FAILED,
@@ -159,8 +165,22 @@ export class AppState {
 		}
 	}
 
-	isEggBall() {
-		return this.packets.find(p => p[1] === "eggBall");
+	gameType() {
+		const mapPacket = this.packets.find(p => p[1] === 'map');
+
+		try {
+			switch (mapPacket[2].info.name) {
+				case 'Egg Ball':
+					return GameTypes.EGGBALL;
+
+				case 'Tower of the TagPro Dragon':
+					return GameTypes.DRAGON_TOWER;
+			}
+		} catch {
+			// ignore
+		}
+
+		return GameTypes.NORMAL;
 	}
 
 	handleSettings() {
