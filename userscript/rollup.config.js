@@ -1,9 +1,9 @@
 import fs from 'fs';
 import template from 'lodash.template';
 import commonjs from 'rollup-plugin-commonjs';
-import postcss from 'rollup-plugin-postcss';
 import resolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
+import styles from "rollup-plugin-styles";
 import typescript from 'rollup-typescript';
 
 const { version } = require('./package.json');
@@ -15,11 +15,10 @@ const plugins = [
 	}),
 	commonjs(),
 	typescript(),
-	postcss({
-		inject: false
-	}),
+	styles(),
 	replace({
-		VCR_URL: 'https://keratagpro.github.io/tagpro-vcr/'
+		VCR_VERSION: version,
+		VCR_URL: 'https://bash-tp.github.io/tagpro-vcr/'
 		// VCR_URL: 'http://localhost:8080/'
 	})
 ];
@@ -32,8 +31,10 @@ const meta = renderTemplate('src/templates/meta.tpl.js', { version });
 fs.writeFileSync('../docs/tagpro-vcr.meta.js', meta, 'utf8');
 
 const globals = {
-	debug: 'debug',
-	tagpro: 'tagpro'
+	idb: 'idb',
+	penpal: 'Penpal',
+	tagpro: 'tagpro',
+	tagproConfig: 'tagproConfig'
 };
 
 export default [

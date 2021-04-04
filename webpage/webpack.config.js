@@ -37,7 +37,8 @@ module.exports = [
 		resolve,
 		module: modules,
 		optimization,
-		plugins: [new CopyPlugin([{ from: 'src/assets' }])]
+		plugins: [new CopyPlugin([{ from: 'src/assets', ignore: ['README.md'] }])],
+		devtool: 'source-map'
 	},
 	{
 		mode: 'development',
@@ -48,5 +49,14 @@ module.exports = [
 		resolve,
 		module: modules,
 		target: 'webworker'
+	},
+	{
+		mode: 'development',
+		entry: {
+			launcher: './src/launcher.ts'
+		},
+		output,
+		resolve,
+		module: modules
 	}
 ];

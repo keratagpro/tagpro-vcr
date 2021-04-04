@@ -1,12 +1,16 @@
 # TagPro VCR
 
+*Note*: This project was originally developed by [Kera](https://github.com/keratagpro/tagpro-vcr) but that user seems to have gone dark,
+with no response to pull requests or private messages. Development continues here, with hopes of merging with the original at some point in
+the future.
+
 ## Usage
 
-1.  Install the userscript: [tagpro-vcr.user.js](https://keratagpro.github.io/tagpro-vcr/tagpro-vcr.user.js).
+1.  Install the userscript: [tagpro-vcr.user.js](https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js).
 
 2.  Play a game of [TagPro](http://tagpro.gg).
 
-3.  Upload the recording to the VCR: https://keratagpro.github.io/tagpro-vcr
+3.  Upload the recording to the VCR: https://bash-tp.github.io/tagpro-vcr
 
 ## Technical Info
 
@@ -27,3 +31,6 @@ The VCR webpage runs the original game client code (`global-game.js`), but repla
 *   Run `lerna run build` (runs `npm run build` in sub-packages)
 
 To automatically recompile when source files change, `cd` to sub-package directories and run `npm run watch`.
+To test the webpage component, `cd webpage` and run `npm run test` to start a webserver on `http://localhost:8080`.
+
+Settings for Visual Studio Code are included in the source tree. If you're using VS Code, the `TSLint` and `es6-string-html` plugins are recommended.

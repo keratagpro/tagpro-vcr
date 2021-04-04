@@ -9,6 +9,7 @@
 		"allowJs": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"lib": ["es2017", "dom", "webworker"]
+		"lib": ["es2017", "dom", "webworker"],
+		"newLine": "LF"
 	}
 }

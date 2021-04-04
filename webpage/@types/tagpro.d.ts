@@ -48,6 +48,7 @@ declare class TagPro {
 	chat: TagPro.Chat;
 	fps: number;
 	gameEndsAt: Date;
+	overtimeStartedAt: Date;
 	group: TagPro.Group;
 	kick: TagPro.Kick;
 	musicPlayer: TagPro.MusicPlayer;
@@ -253,7 +254,7 @@ declare namespace TagPro {
 			spectatorInfo: boolean;
 			systemChat: boolean;
 			teamChat: boolean;
-			teamNames: boolean;
+			teamNames: string;
 		};
 	}
 
@@ -293,10 +294,16 @@ declare namespace TagPro {
 		teleportOther;
 	}
 
-	enum State {
+	const enum State {
 		Active = 1,
 		Ended = 2,
-		NotStarted = 3
+		NotStarted = 3,
+		Overtime = 5
+	}
+
+	const enum Teams {
+		Red = 1,
+		Blue = 2
 	}
 
 	interface Tiles extends Array<any> {
@@ -328,7 +335,7 @@ declare namespace TagPro {
 
 		alignUI(): void;
 		largeAlert(): void;
-		performanceInfo(): void;
+		performanceInfo(...args): void;
 		resize(width: number, height: number): void;
 		scores(): void;
 		spectatorInfo(): void;

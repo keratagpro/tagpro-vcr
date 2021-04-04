@@ -1,0 +1,89 @@
+ul.vcr-list {
+	list-style: disc outside;
+	margin-left: 2rem;
+}
+
+.vcr-button {
+	font-size: 1.8em;
+	border: none;
+	box-shadow: none;
+	background-color: #ffff00;
+	margin-bottom: inherit;
+	filter: invert(27%) sepia(48%) saturate(3292%) hue-rotate(183deg) brightness(99%) contrast(98%);
+}
+
+.vcr-button:hover, .vcr-button:focus, .vcr-button:active {
+	background-color: #ffff00;
+	opacity: 0.5;
+}
+
+.vcr-button-play, .vcr-button-play:hover, .vcr-button-play:focus, .vcr-button-play:active {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' style='enable-background:new 0 0 300 300' xml:space='preserve'%3E%3Cpath d='M300 0H0v300h300V0zm-94.2 158.3-86.6 50c-1.3.8-2.8 1.1-4.3 1.1-4.7 0-8.5-3.8-8.5-8.5V101c0-3.1 1.6-5.9 4.3-7.4 2.6-1.5 5.9-1.5 8.6 0l86.6 50c2.6 1.5 4.3 4.3 4.3 7.4-.1 2.9-1.7 5.7-4.4 7.3z'/%3E%3C/svg%3E");
+}
+
+.vcr-button-download, .vcr-button-download:hover, .vcr-button-download:focus, .vcr-button-download:active {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300' style='enable-background:new 0 0 300 300' xml:space='preserve'%3E%3Cpath d='M0 0v300h300V0H0zm126.4 133h12.7V93.5s-.5-1.9 2.4-1.9h17.8c2.1 0 2 1.6 2 1.6v39H173c4.5 0 1.1 3.4 1.1 3.4s-19.1 25.4-21.8 28c-1.9 1.9-3.8-.2-3.8-.2L126 136.2c.1 0-3.3-3.2.4-3.2zm80.2 67.6c0 4.3-3.5 7.8-7.9 7.8h-97.4c-4.4 0-7.9-3.5-7.9-7.8V166h15.7v26.7h81.7V166h15.7v34.6z'/%3E%3C/svg%3E");
+}
+
+.vcr-hidden {
+	display: none;
+}
+
+.vcr-select {
+	background: #212121;
+	border-color: #5f5f5f;
+}
+
+.vcr-mask {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	height: 100px;
+	width: 100px;
+	margin: auto;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.vcr-mask:before {
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	opacity: 0.8;
+	background-color: #000000;
+}
+
+.vcr-mask-inside {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.vcr-mask-inside::after {
+	content: "";
+	position: absolute;
+	border-width: 3px;
+	border-style: solid;
+	border-color: transparent rgb(255, 255, 255) rgb(255, 255, 255);
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	top: calc(50% - 12px);
+	left: calc(50% - 12px);
+	animation: 2s linear 0s normal none infinite running vcr-spin;
+	/* filter: drop-shadow(0 0 2 rgba(0, 0, 0, 0.33)); */
+}
+
+@keyframes vcr-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(359deg);
+	}
+}
