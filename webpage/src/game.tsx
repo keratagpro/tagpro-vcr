@@ -1,30 +1,46 @@
 import BackgroundPlayer from './utils/BackgroundPlayer';
 import EventedChannel from './utils/EventedChannel';
 import FakeSocket from './utils/FakeSocket';
+import PauseableTimeouts from './utils/PauseableTimeout';
 
 declare var tagpro: TagPro;
 declare var tagproConfig: TagProConfig;
 declare var $: any;
 
 const save = {
+	performanceInfo: null,
 	sound: null as boolean,
 	time: null as number,
 	uiTimer: null,
 	worldUpdate: null,
-	setTimeout: null
+	map: null as any[][]
 };
 
+PauseableTimeouts.hookSetTimeout();
+
 tagpro.ready(() => {
+	$('#volumeSlider').blur();
+
 	tagproConfig.serverHost = "#";
 	tagproConfig.musicHost = "#";
 
 	tagpro.spectator = true;
 	tagpro.ui.spectatorInfo = () => {};
 
-	const performanceInfo = tagpro.ui.performanceInfo;
+	save.performanceInfo = tagpro.ui.performanceInfo;
 	tagpro.ui.performanceInfo = (e, t, n, r) => {
-		(tagpro.ping.avg as any) = "Unknown";
-		performanceInfo(e, t, n, 0);
+		(tagpro.ping.avg as any) = "N/A";
+		save.performanceInfo(e, t, n, 0);
+	};
+
+	// The default "end" handler uses setTimeout to navigate back to
+	// the joiner, then calls sendPingStatistics right after. We'll
+	// override sendPingStatistics to cancel the timer and prevent
+	// navigating away.
+
+	tagpro.sendPingStatistics = () => {
+		const id = window.setTimeout(() => {});
+		clearTimeout(id - 1);
 	};
 
 	// Note: $.cookie returns boolean values here rather than strings
@@ -58,18 +74,14 @@ tagpro.ready(() => {
 	tagpro.socket.on("connect", doSettings);
 	tagpro.socket.on("settings", doSettings);
 
+	tagpro.socket.on("map", e => {
+		save.map = JSON.parse(JSON.stringify(e.tiles));
+	});
+
 	tagpro.socket.on("time", e => {
 		if (e.restore) {
 			tagpro.sound = save.sound;
 		}
-	});
-
-	tagpro.rawSocket.prependListener("end", e => {
-		// Block setTimeout to prevent the default "end" handler
-		// from trying to navigate back to the joiner
-
-		save.setTimeout = window.setTimeout;
-		window.setTimeout = (...args) => { return 0 };
 	});
 
 	tagpro.socket.on("vcr_end", e => {
@@ -141,13 +153,19 @@ const io = {
 			}
 		});
 
-		channel.on('pause', () => {
+		let paused = false;
+
+		const pause = () => {
 			player.pause();
+			PauseableTimeouts.pauseAll();
+
+			paused = true;
+			const now = Date.now();
 
 			if (tagpro.gameEndsAt && !tagpro.overtimeStartedAt) {
-				save.time = tagpro.gameEndsAt.valueOf() - Date.now();
+				save.time = tagpro.gameEndsAt.valueOf() - now;
 			} else if (tagpro.overtimeStartedAt) {
-				save.time = Date.now() - tagpro.overtimeStartedAt.valueOf();
+				save.time = now - tagpro.overtimeStartedAt.valueOf();
 			}
 
 			save.uiTimer = tagpro.ui.timer;
@@ -155,20 +173,28 @@ const io = {
 
 			tagpro.ui.timer = (...args) => {};
 			tagpro.world.update = (...args) => {};
-		});
+		};
 
-		channel.on('unpause', () => {
+		const unpause = () => {
 			tagpro.ui.timer = save.uiTimer;
 			tagpro.world.update = save.worldUpdate;
 
+			const now = Date.now();
+
 			if (tagpro.gameEndsAt && !tagpro.overtimeStartedAt) {
-				tagpro.gameEndsAt = new Date(Date.now() + save.time);
+				(tagpro.gameEndsAt as any) = now + save.time;
 			} else if (tagpro.overtimeStartedAt) {
-				tagpro.overtimeStartedAt = new Date(Date.now() - save.time);
+				(tagpro.overtimeStartedAt as any) = now - save.time;
 			}
 
+			PauseableTimeouts.resumeAll();
 			player.play();
-		});
+
+			paused = false;
+		};
+
+		channel.on('pause', pause);
+		channel.on('unpause', unpause);
 
 		channel.on('seek', to => {
 			player.pause();
@@ -188,6 +214,20 @@ const io = {
 
 			for (let i = 0; i < 10; i++) {
 				player.emit("chat", { from: null, to: "all", message: "\xa0" });
+			}
+
+			const update = tagpro.world.update;
+			tagpro.world.update = (...args) => {
+				tagpro.renderer.layers.splats.removeChildren();
+
+				for (let x = 0; x < save.map.length; x++) {
+					for (let y = 0; y < save.map[x].length; y++) {
+						tagpro.renderer.updateDynamicTile({ x, y, v: save.map[x][y] });
+					}
+				}
+
+				tagpro.world.update = update;
+				update(...args);
 			}
 
 			player.seek(to);

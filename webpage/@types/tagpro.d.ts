@@ -79,6 +79,7 @@ declare class TagPro {
 	joinGame(): void;
 	playSound(name): void;
 	sendKeyPress(direction: string, released: boolean): void;
+	sendPingStatistics(): void;
 	showOptions(): void;
 	stopSound(sound: string): void;
 	updateSounds(): void;
@@ -240,6 +241,12 @@ declare namespace TagPro {
 	interface Position {
 		x: number;
 		y: number;
+	}
+
+	interface MapUpdate {
+		x: number;
+		y: number;
+		v: any;
 	}
 
 	interface Settings {
@@ -463,7 +470,7 @@ declare namespace TagPro {
 		/**
 		 * Layer creation functions.
 		 */
-		createMidground(): void;
+		createMidground(container): void;
 
 		/**
 		 * Creates the overlay DisplayObjectContainer and appends itself to the specified container.
@@ -641,7 +648,7 @@ declare namespace TagPro {
 
 		updateTagpro(player: Player): void;
 
-		updatedynamicTile(update: Position): void;
+		updateDynamicTile(update: MapUpdate): void;
 
 		veryPrettyText(text, color): PIXI.Sprite;
 	}

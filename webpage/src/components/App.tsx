@@ -70,7 +70,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 							{ProfileSettings.renderProfileCheckbox('vcrHideFlair', 'Show Flair', false)}<br />
 							<p />
 							Tile Respawn Warnings:<br />
-							{ProfileSettings.renderTileRespawnSelect()}
+							{ProfileSettings.renderTileRespawnSelect()}<br />
 						</div>
 					</div>
 					<p />
@@ -83,6 +83,51 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 	}
 
 	renderInfo() {
+		const { appState } = this.props;
+
+		return (
+			<div className="container grid-sm panel">
+				<div className="panel-header">
+					<div className="panel-title h5">TagPro VCR</div>
+				</div>
+				<div className="panel-body">
+					<h6>Usage</h6>
+					<ol>
+						<li>
+							Install the userscript:{' '}
+							<a href="https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js">tagpro-vcr.user.js</a>.
+						</li>
+						<li>
+							Play a game of <a href="http://tagpro.gg">TagPro</a>.
+						</li>
+						<li>
+							Upload the recorded game here ({this.renderUploadLabel()}) and click{' '}
+							{this.renderStartButton()}.
+						</li>
+					</ol>
+					<h6>Notes</h6>
+					<ul>
+						<li>
+							To test your TagPro userscripts here, add this @include:<br />
+							<code>// @include https://bash-tp.github.io/tagpro-vcr/game*.html</code>
+						</li>
+						<li>
+							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
+							<code>+</code>/<code>-</code> to zoom in/out etc.
+							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
+						</li>
+					</ul>
+					<h6>Texture Pack Selection</h6>
+					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
+					<div>{Textures.renderTextureSelect()}</div>
+					<p />
+					<button className="btn centered" onClick={appState.handleSettings}>More Settings</button>
+				</div>
+			</div>
+		);
+	}
+
+	renderModals() {
 		const { appState } = this.props;
 
 		const okButton = (
@@ -126,43 +171,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 			/>;
 
 		return (
-			<div className="container grid-sm panel">
-				<div className="panel-header">
-					<div className="panel-title h5">TagPro VCR</div>
-				</div>
-				<div className="panel-body">
-					<h6>Usage</h6>
-					<ol>
-						<li>
-							Install the userscript:{' '}
-							<a href="https://bash-tp.github.io/tagpro-vcr/tagpro-vcr.user.js">tagpro-vcr.user.js</a>.
-						</li>
-						<li>
-							Play a game of <a href="http://tagpro.gg">TagPro</a>.
-						</li>
-						<li>
-							Upload the recorded game here ({this.renderUploadLabel()}) and click{' '}
-							{this.renderStartButton()}.
-						</li>
-					</ol>
-					<h6>Notes</h6>
-					<ul>
-						<li>
-							To test your TagPro userscripts here, add this @include:<br />
-							<code>// @include https://bash-tp.github.io/tagpro-vcr/game*.html</code>
-						</li>
-						<li>
-							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
-							<code>+</code>/<code>-</code> to zoom in/out etc.
-							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
-						</li>
-					</ul>
-					<h6>Texture Pack Selection</h6>
-					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
-					<div>{Textures.renderTextureSelect()}</div>
-					<p />
-					<button className="btn centered" onClick={appState.handleSettings}>More Settings</button>
-				</div>
+			<div>
 				{failedModal}
 				{forbiddenModal}
 				{loadingModal}
@@ -261,8 +270,15 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		return (
 			<div className="form-horizontal">
 				<span className="control">
+					<button
+						className="btn jump" type="button"
+						data-jump="-10" title="Jump back 10 seconds"
+						disabled={appState.finished}
+						onClick={appState.handleJump}
+					>&laquo;</button>
+					{' '}
 					<Slider
-						min={appState.minTS} max={appState.maxTS-(appState.maxTS % 1000)}
+						min={appState.minTS} max={appState.maxTSSeek}
 						value={appState.currentTS} defaultValue={appState.minTS}
 						handle={handle}
 						disabled={appState.finished}
@@ -271,14 +287,23 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					/>
 					{' '}
 					<button
-						className="btn" type="button"
+						className="btn jump" type="button"
+						data-jump="10" title="Jump forward 10 seconds"
+						disabled={appState.finished}
+						onClick={appState.handleJump}
+					>&raquo;</button>
+					{' '}
+					<button
+						className="btn space-left" type="button"
 						data-state={appState.finished ? "reload" : appState.paused ? "play" : "pause"}
+						title={appState.finished ? "Restart playback" : appState.paused ? "Continue playback" : "Pause playback"}
 						onClick={appState.handleButton}
 					/>
 					{' '}
 					<button
 						className="btn" type="button"
 						data-state="stop"
+						title="Stop playback"
 						onClick={appState.handleStop}
 					/>
 				</span>
@@ -304,6 +329,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 						</a>
 					</section>
 				</header>
+				{this.renderModals()}
 
 				<div id="game-container">{appState.started ? this.renderGame() : appState.settings ? this.renderSettings() : this.renderInfo()}</div>
 			</div>

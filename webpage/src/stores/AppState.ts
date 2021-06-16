@@ -43,6 +43,7 @@ export class AppState {
 
 	minTS = 0;
 	maxTS = 0;
+	maxTSSeek = 0;
 	currentTS = 0;
 	firstTimePacket: Packet = undefined;
 	startPacket: Packet = undefined;
@@ -100,6 +101,7 @@ export class AppState {
 					.then(text => {
 						runInAction(() => {
 							this.recording = text;
+							this.recordingName = url.replace(/[#?].*$/, '').replace(/^.*\//, '');
 							this.fetching = false;
 							this.urlIsValid = true;
 
@@ -311,6 +313,14 @@ export class AppState {
 		this.channel.emit('reload');
 	}
 
+	handleJump(ev: React.MouseEvent) {
+		const target = ev.target as HTMLButtonElement;
+		const delta = Number(target.getAttribute('data-jump')) * 1000;
+		const nextTS = Math.min(Math.max(this.currentTS + delta, this.minTS), this.maxTSSeek);
+
+		this.handleSeek(nextTS);
+	}
+
 	handleSlider(pos: number) {
 		this.currentTS = pos;
 		this.seeking = true;
@@ -356,6 +366,7 @@ export class AppState {
 
 		this.minTS = this.firstTimePacket[0];
 		this.maxTS = endPacket[0];
+		this.maxTSSeek = this.maxTS - (this.maxTS % 1000);
 
 		this.packets = packets;
 	}
