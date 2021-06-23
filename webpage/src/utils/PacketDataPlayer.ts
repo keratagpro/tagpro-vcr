@@ -20,6 +20,7 @@ export default class PacketDataPlayer {
 	constructor(
 		public packets: Packet[],
 		public callback: (ts: number, type: string, data?: any) => void,
+		public seekCallback: (to: number) => void = () => {},
 		public doneCallback = () => {}
 	) {
 		this.currentIndex = 0;
@@ -44,7 +45,7 @@ export default class PacketDataPlayer {
 				const offset = packet[0] - event.ts;
 				const newtime = (event.state === TagPro.State.Overtime) ? event.time + offset : event.time - offset;
 
-				this.callback(packet[0], "time", { time: newtime, state: event.state, restore: true });
+				this.callback(packet[0], "time", { time: newtime, state: event.state });
 
 				this.currentTime = packet[0];
 				this.startedAt = now() - this.currentTime;
@@ -54,6 +55,8 @@ export default class PacketDataPlayer {
 				break;
 			}
 		}
+
+		this.seekCallback(this.currentTime);
 	}
 
 	play(interval = DEFAULT_INTERVAL) {

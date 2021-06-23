@@ -45,6 +45,7 @@ export class AppState {
 	maxTS = 0;
 	maxTSSeek = 0;
 	currentTS = 0;
+	sliderTS = 0;
 	firstTimePacket: Packet = undefined;
 	startPacket: Packet = undefined;
 	overtimePacket: Packet = undefined;
@@ -207,6 +208,7 @@ export class AppState {
 		this.paused = false;
 		this.playing = false;
 		this.currentTS = this.minTS;
+		this.sliderTS = this.minTS;
 
 		this.channel.emit('recording', this.packets);
 	}
@@ -221,11 +223,8 @@ export class AppState {
 
 		if (state === TagPro.State.Ended) {
 			this.currentTS = this.maxTS;
+			this.sliderTS = this.maxTS;
 			this.finished = true;
-			return;
-		}
-
-		if (this.seeking) {
 			return;
 		}
 
@@ -234,6 +233,10 @@ export class AppState {
 		} else {
 			const packet = (state === TagPro.State.NotStarted) ? this.firstTimePacket : this.startPacket;
 			this.currentTS = packet[0] + (packet[2].time - time);
+		}
+
+		if (!this.seeking) {
+			this.sliderTS = this.currentTS;
 		}
 	}
 
@@ -322,10 +325,10 @@ export class AppState {
 	}
 
 	handleSlider(pos: number) {
-		this.currentTS = pos;
+		this.sliderTS = pos;
 		this.seeking = true;
-
 	}
+
 	handleSeek(to: number) {
 		if (this.paused) {
 			this.handleUnpause();
@@ -333,6 +336,7 @@ export class AppState {
 
 		if (this.finished) {
 			this.currentTS = this.maxTS;
+			this.sliderTS = this.maxTS;
 			this.seeking = false;
 			return;
 		}

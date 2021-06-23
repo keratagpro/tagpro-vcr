@@ -436,7 +436,7 @@ const App = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(class Ap
             react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("span", { className: "control" },
                 react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("button", { className: "btn jump", type: "button", "data-jump": "-10", title: "Jump back 10 seconds", disabled: appState.finished, onClick: appState.handleJump }, "\u00AB"),
                 ' ',
-                react__WEBPACK_IMPORTED_MODULE_2__["createElement"](rc_slider__WEBPACK_IMPORTED_MODULE_3__["default"], { min: appState.minTS, max: appState.maxTSSeek, value: appState.currentTS, defaultValue: appState.minTS, handle: handle, disabled: appState.finished, onChange: appState.handleSlider, onAfterChange: appState.handleSeek }),
+                react__WEBPACK_IMPORTED_MODULE_2__["createElement"](rc_slider__WEBPACK_IMPORTED_MODULE_3__["default"], { min: appState.minTS, max: appState.maxTSSeek, value: appState.sliderTS, defaultValue: appState.minTS, handle: handle, disabled: appState.finished, onChange: appState.handleSlider, onAfterChange: appState.handleSeek }),
                 ' ',
                 react__WEBPACK_IMPORTED_MODULE_2__["createElement"]("button", { className: "btn jump", type: "button", "data-jump": "10", title: "Jump forward 10 seconds", disabled: appState.finished, onClick: appState.handleJump }, "\u00BB"),
                 ' ',
@@ -579,6 +579,7 @@ class AppState {
         this.maxTS = 0;
         this.maxTSSeek = 0;
         this.currentTS = 0;
+        this.sliderTS = 0;
         this.firstTimePacket = undefined;
         this.startPacket = undefined;
         this.overtimePacket = undefined;
@@ -705,6 +706,7 @@ class AppState {
         this.paused = false;
         this.playing = false;
         this.currentTS = this.minTS;
+        this.sliderTS = this.minTS;
         this.channel.emit('recording', this.packets);
     }
     handleShowControls() {
@@ -715,10 +717,8 @@ class AppState {
         const time = data.time;
         if (state === 2 /* Ended */) {
             this.currentTS = this.maxTS;
+            this.sliderTS = this.maxTS;
             this.finished = true;
-            return;
-        }
-        if (this.seeking) {
             return;
         }
         if (state === 5 /* Overtime */) {
@@ -727,6 +727,9 @@ class AppState {
         else {
             const packet = (state === 3 /* NotStarted */) ? this.firstTimePacket : this.startPacket;
             this.currentTS = packet[0] + (packet[2].time - time);
+        }
+        if (!this.seeking) {
+            this.sliderTS = this.currentTS;
         }
     }
     handleButton(ev) {
@@ -796,7 +799,7 @@ class AppState {
         this.handleSeek(nextTS);
     }
     handleSlider(pos) {
-        this.currentTS = pos;
+        this.sliderTS = pos;
         this.seeking = true;
     }
     handleSeek(to) {
@@ -805,6 +808,7 @@ class AppState {
         }
         if (this.finished) {
             this.currentTS = this.maxTS;
+            this.sliderTS = this.maxTS;
             this.seeking = false;
             return;
         }

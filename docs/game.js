@@ -453,6 +453,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const save = {
     performanceInfo: null,
+    seeking: false,
     sound: null,
     time: null,
     uiTimer: null,
@@ -508,13 +509,19 @@ tagpro.ready(() => {
     tagpro.socket.on("map", e => {
         save.map = JSON.parse(JSON.stringify(e.tiles));
     });
-    tagpro.socket.on("time", e => {
-        if (e.restore) {
-            tagpro.sound = save.sound;
+    tagpro.socket.on("vcr_time", e => {
+        if (save.seeking) {
+            _utils_PauseableTimeout__WEBPACK_IMPORTED_MODULE_3__["default"].setBase(e.time);
         }
     });
     tagpro.socket.on("vcr_end", e => {
         tagpro.state = 2 /* Ended */;
+    });
+    tagpro.socket.on("vcr_seek", e => {
+        tagpro.sound = save.sound;
+        save.seeking = false;
+        _utils_PauseableTimeout__WEBPACK_IMPORTED_MODULE_3__["default"].setBase(0);
+        _utils_PauseableTimeout__WEBPACK_IMPORTED_MODULE_3__["default"].shiftAll(e.to);
     });
 });
 const io = {
@@ -602,7 +609,10 @@ const io = {
         channel.on('pause', pause);
         channel.on('unpause', unpause);
         channel.on('seek', to => {
-            player.pause();
+            if (!paused) {
+                player.pause();
+            }
+            save.seeking = true;
             save.sound = tagpro.sound;
             tagpro.sound = false;
             tagpro.gameEndsAt = null;
@@ -613,9 +623,9 @@ const io = {
                     player.emit('playerLeft', id);
                 }
             });
-            for (let i = 0; i < 10; i++) {
-                player.emit("chat", { from: null, to: "all", message: "\xa0" });
-            }
+            // Fire any pending timers now
+            // After the seek is complete, any new timers will be time-shifted
+            _utils_PauseableTimeout__WEBPACK_IMPORTED_MODULE_3__["default"].shiftAll(-1);
             const update = tagpro.world.update;
             tagpro.world.update = (...args) => {
                 tagpro.renderer.layers.splats.removeChildren();
@@ -663,10 +673,14 @@ class BackgroundPlayer extends eventemitter3__WEBPACK_IMPORTED_MODULE_0___defaul
         super();
         this.worker = new _EventedWorker__WEBPACK_IMPORTED_MODULE_1__["default"](stringUrl);
         this.worker.on('packet', (ts, type, ...args) => {
+            this.emit('vcr_time', { time: ts });
             this.emit(type, ...args);
         });
         this.worker.on('end', () => {
             this.emit('vcr_end');
+        });
+        this.worker.on('seek', to => {
+            this.emit('vcr_seek', { to });
         });
     }
     load(data) {
@@ -776,11 +790,11 @@ class FakeSocket {
         }
         // this.player.worker.emit(type, data);
     }
+    listeners(type) {
+        return this.player.listeners(type);
+    }
     prependListener(type, listener) {
-        const listeners = this.player.listeners(type);
-        this.player.removeAllListeners(type);
-        this.player.on(type, listener);
-        listeners.forEach(l => this.player.on(type, l));
+        this.listeners(type).unshift(listener);
     }
     removeListener(type, listener) {
         this.player.removeListener(type, listener);
@@ -831,6 +845,7 @@ class PauseableTimer {
     }
     pause() {
         _clearTimeout(this.timerId);
+        this.timerId = null;
         this.remaining -= Date.now() - this.start;
     }
     resume() {
@@ -851,8 +866,14 @@ class PauseableTimer {
         this.timerId = _setTimeout(handler.bind(this), this.remaining);
         (_a = this.originalId) !== null && _a !== void 0 ? _a : (this.originalId = this.timerId);
     }
+    shift(delta) {
+        this.pause();
+        this.remaining = delta < 0 ? 0 : Math.max(this.remaining - delta, 0);
+        this.resume();
+    }
 }
 const timers = {};
+let timeBase = 0;
 class PauseableTimeouts {
     static hookSetTimeout() {
         window.setTimeout = (handler, timeout, ...args) => {
@@ -863,7 +884,7 @@ class PauseableTimeouts {
                 const onExecute = (timer) => {
                     delete timers[timer.originalId];
                 };
-                const newTimer = new PauseableTimer(onExecute, handler, timeout, ...args);
+                const newTimer = new PauseableTimer(onExecute, handler, timeout + timeBase, ...args);
                 const id = newTimer.timerId;
                 timers[id] = newTimer;
                 return id;
@@ -874,7 +895,9 @@ class PauseableTimeouts {
         };
         window.clearTimeout = (handle) => {
             if (handle && (handle in timers)) {
-                _clearTimeout(timers[handle].timerId);
+                const timerId = timers[handle].timerId;
+                if (timerId)
+                    _clearTimeout(timerId);
                 delete timers[handle];
             }
             else {
@@ -887,6 +910,12 @@ class PauseableTimeouts {
     }
     static resumeAll() {
         Object.values(timers).forEach(timer => timer.resume());
+    }
+    static shiftAll(delta) {
+        Object.values(timers).forEach(timer => timer.shift(delta));
+    }
+    static setBase(base) {
+        timeBase = base;
     }
 }
 

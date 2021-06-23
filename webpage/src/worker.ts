@@ -22,6 +22,9 @@ events.on('load', function(replay: [number, string, any][]) {
 		function(ts, type, data) {
 			emit('packet', ts, type, data);
 		},
+		function(to) {
+			emit('seek', to);
+		},
 		function() {
 			emit('end');
 		}

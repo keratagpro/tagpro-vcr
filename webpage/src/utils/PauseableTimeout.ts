@@ -29,6 +29,7 @@ class PauseableTimer {
 
 	pause() {
 		_clearTimeout(this.timerId);
+		this.timerId = null;
 		this.remaining -= Date.now() - this.start;
 	}
 
@@ -49,6 +50,12 @@ class PauseableTimer {
 		this.timerId = _setTimeout(handler.bind(this), this.remaining);
 		this.originalId ??= this.timerId;
 	}
+
+	shift(delta: number) {
+		this.pause();
+		this.remaining = delta < 0 ? 0 : Math.max(this.remaining - delta, 0);
+		this.resume();
+	}
 }
 
 interface Timers {
@@ -56,6 +63,7 @@ interface Timers {
 }
 
 const timers: Timers = {};
+let timeBase = 0;
 
 export default abstract class PauseableTimeouts {
 	public static hookSetTimeout() {
@@ -69,7 +77,7 @@ export default abstract class PauseableTimeouts {
 					delete timers[timer.originalId];
 				};
 
-				const newTimer = new PauseableTimer(onExecute, handler, timeout, ...args);
+				const newTimer = new PauseableTimer(onExecute, handler, timeout + timeBase, ...args);
 				const id = newTimer.timerId;
 				timers[id] = newTimer;
 				return id;
@@ -80,7 +88,8 @@ export default abstract class PauseableTimeouts {
 
 		(window as any).clearTimeout = (handle?: number) => {
 			if (handle && (handle in timers)) {
-				_clearTimeout(timers[handle].timerId);
+				const timerId = timers[handle].timerId;
+				if (timerId) _clearTimeout(timerId);
 				delete timers[handle];
 			} else {
 				_clearTimeout(handle);
@@ -94,5 +103,13 @@ export default abstract class PauseableTimeouts {
 
 	public static resumeAll() {
 		Object.values(timers).forEach(timer => timer.resume());
+	}
+
+	public static shiftAll(delta: number) {
+		Object.values(timers).forEach(timer => timer.shift(delta));
+	}
+
+	public static setBase(base: number) {
+		timeBase = base;
 	}
 }

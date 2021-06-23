@@ -279,7 +279,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					{' '}
 					<Slider
 						min={appState.minTS} max={appState.maxTSSeek}
-						value={appState.currentTS} defaultValue={appState.minTS}
+						value={appState.sliderTS} defaultValue={appState.minTS}
 						handle={handle}
 						disabled={appState.finished}
 						onChange={appState.handleSlider}

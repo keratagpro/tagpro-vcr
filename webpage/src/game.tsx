@@ -9,6 +9,7 @@ declare var $: any;
 
 const save = {
 	performanceInfo: null,
+	seeking: false,
 	sound: null as boolean,
 	time: null as number,
 	uiTimer: null,
@@ -78,14 +79,21 @@ tagpro.ready(() => {
 		save.map = JSON.parse(JSON.stringify(e.tiles));
 	});
 
-	tagpro.socket.on("time", e => {
-		if (e.restore) {
-			tagpro.sound = save.sound;
+	tagpro.socket.on("vcr_time", e => {
+		if (save.seeking) {
+			PauseableTimeouts.setBase(e.time);
 		}
 	});
 
 	tagpro.socket.on("vcr_end", e => {
 		tagpro.state = TagPro.State.Ended;
+	});
+
+	tagpro.socket.on("vcr_seek", e => {
+		tagpro.sound = save.sound;
+		save.seeking = false;
+		PauseableTimeouts.setBase(0);
+		PauseableTimeouts.shiftAll(e.to);
 	});
 });
 
@@ -197,8 +205,11 @@ const io = {
 		channel.on('unpause', unpause);
 
 		channel.on('seek', to => {
-			player.pause();
+			if (!paused) {
+				player.pause();
+			}
 
+			save.seeking = true;
 			save.sound = tagpro.sound;
 			tagpro.sound = false;
 
@@ -212,9 +223,10 @@ const io = {
 				}
 			});
 
-			for (let i = 0; i < 10; i++) {
-				player.emit("chat", { from: null, to: "all", message: "\xa0" });
-			}
+			// Fire any pending timers now
+			// After the seek is complete, any new timers will be time-shifted
+
+			PauseableTimeouts.shiftAll(-1);
 
 			const update = tagpro.world.update;
 			tagpro.world.update = (...args) => {

@@ -16,12 +16,12 @@ export default class FakeSocket {
 		// this.player.worker.emit(type, data);
 	}
 
-	prependListener(type, listener) {
-		const listeners = this.player.listeners(type);
-		this.player.removeAllListeners(type);
+	listeners(type) {
+		return this.player.listeners(type);
+	}
 
-		this.player.on(type, listener);
-		listeners.forEach(l => this.player.on(type, l));
+	prependListener(type, listener) {
+		this.listeners(type).unshift(listener);
 	}
 
 	removeListener(type, listener) {
