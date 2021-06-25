@@ -587,7 +587,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const fetchPatterns = [
-    new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$')
+    new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$'),
+    new RegExp('^https://tpm\\.gg/Match/Replay/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 ];
 var GameTypes;
 (function (GameTypes) {
@@ -751,6 +752,7 @@ class AppState {
     }
     handleFileSelect(ev) {
         this.selectedFile = ev.target.files[0];
+        this.recordingURL = '';
         ev.target.value = '';
     }
     handleUrlChange(ev) {

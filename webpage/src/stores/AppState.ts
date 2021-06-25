@@ -5,7 +5,8 @@ import EventedChannel from '../utils/EventedChannel';
 import { Packet } from '../utils/PacketDataPlayer';
 
 const fetchPatterns = [
-	new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$')
+	new RegExp('^https://res\\.cloudinary\\.com/eggball/raw/upload/EggBall/[0-9]+.ndjson$'),
+	new RegExp('^https://tpm\\.gg/Match/Replay/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
 ];
 
 export enum GameTypes {
@@ -209,6 +210,7 @@ export class AppState {
 
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {
 		this.selectedFile = ev.target.files[0];
+		this.recordingURL = '';
 		ev.target.value = '';
 	}
 
