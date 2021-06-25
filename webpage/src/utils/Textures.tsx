@@ -6,6 +6,11 @@ const cookieOptions = {
 	expires: 36500
 };
 
+let currentTexture;
+
+// Texture definitions are copied from the "texture-pack-data" section
+// at https://tagpro.koalabeast.com/textures/
+
 const textures = {
 	"Classic": {
 		"author": "LuckySpammer",
@@ -470,38 +475,110 @@ function getTexture(name) {
 }
 
 function getTextureList() {
-	const list = [];
+	return Object.keys(textures).map(key => { return { label: key, value: key } });
+}
 
-	Object.entries(textures).forEach(([name, texture]) => {
-		list.push({ label: name, value: JSON.stringify(texture) });
-	});
-
-	return list;
+function setTextureCookie() {
+	Cookies.set('textures', JSON.stringify(currentTexture), cookieOptions);
 }
 
 function handleTextureChange(selection) {
-	Cookies.set('textures', selection.value, cookieOptions);
+	currentTexture = getTexture(selection.label);
+	setTextureCookie();
 }
 
 export function renderTextureSelect() {
-	const initial = { label: "Muscle's Cup Gradients" };
+	currentTexture = getTexture("Muscle's Cup Gradients");
 
 	const cookie = Cookies.get('textures');
 	if (cookie) {
-		const texture = JSON.parse(cookie);
-		const name = texture.name;
-
-		if (getTexture(name)) {
-			initial.label = name;
-		}
+		currentTexture = JSON.parse(cookie);
 	}
+
+	const selected = { label: currentTexture['name'] === 'custom' ? 'Custom' : currentTexture['name']};
 
 	return (
 		<Select
-			defaultValue={initial}
+			defaultValue={selected}
 			options={getTextureList()}
 			onChange={handleTextureChange}
 			menuPosition="fixed"
 		/>
 	);
+}
+
+export function renderCustomTextureInput(id: string, name: string, props: { [key: string]: number }) {
+	return (
+		<div className="form-group">
+			<div className="col-3">
+				<label className="form-label" htmlFor={id}>{name}</label>
+			</div>
+			<div className="col-9">
+				<input className="form-input texture-url" type="text" id={id} data-label={name}
+					placeholder="Enter URL" defaultValue={currentTexture[id]}
+					{...props}
+				/>
+			</div>
+		</div>
+	);
+}
+
+function getTextureFields() {
+	return Array.from(document.getElementsByClassName("texture-url")).map(elt => elt.id);
+}
+
+function checkTextureFile(file: string) {
+	const elt = document.getElementById(file) as HTMLInputElement;
+	const url = elt.value;
+	const name = elt.getAttribute("data-label");
+
+	// The logic below is copied from global-texturePackPicker.js
+
+	return new Promise<void>((resolve, reject) => {
+		if (!url) {
+			return resolve();
+		}
+
+		const img = new Image();
+
+		img.onload = () => {
+			return elt.hasAttribute("imagewidth") && img.width !== +elt.getAttribute("imagewidth")
+			? reject(`${name}: width (${img.width}) should be ${elt.getAttribute("imagewidth")}.`)
+			: elt.hasAttribute("imagewidthatleast") && img.width < +elt.getAttribute("imagewidthatleast")
+			? reject(`${name}: width (${img.width}) should be at least ${elt.getAttribute("imagewidthatleast")}.`)
+			: elt.hasAttribute("imagewidthmultipleof") && img.width % +elt.getAttribute("imagewidthmultipleof") !== 0
+			? reject(`${name}: width (${img.width}) should be a multiple of ${elt.getAttribute("imagewidthmultipleof")}.`)
+			: elt.hasAttribute("imageheight") && img.height !== +elt.getAttribute("imageheight")
+			? reject(`${name}: height (${img.height}) should be ${elt.getAttribute("imageheight")}.`)
+			: resolve();
+		};
+
+		img.onerror = () => {
+			return reject(`${name}: URL cannot be loaded.`);
+		}
+
+		img.src = url;
+	})
+}
+
+export function checkCustomTextures(okHandler: () => void, errorHandler: (error: string) => void) {
+	const each = (promise: Promise<void>, file: string) => {
+		return promise
+			.then(_ => checkTextureFile(file))
+			.catch(reason => { throw reason });
+	};
+
+	const files = getTextureFields();
+	const chain = files.reduce(each, Promise.resolve());
+
+	chain.then(okHandler).catch(errorHandler);
+}
+
+export function saveCustomTextures() {
+	const files = getTextureFields();
+	currentTexture = { name: 'custom' };
+
+	files.forEach(field => currentTexture[field] = (document.getElementById(field) as HTMLInputElement).value);
+
+	setTextureCookie();
 }

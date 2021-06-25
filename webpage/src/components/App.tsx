@@ -82,6 +82,47 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		);
 	}
 
+	saveCustomTextures() {
+		const { appState } = this.props;
+
+		const ok = () => {
+			Textures.saveCustomTextures();
+			appState.handleDismissModal();
+			appState.handleCustomTextures();
+		}
+
+		appState.handleCustomTextureChecking();
+		Textures.checkCustomTextures(ok, appState.handleCustomTextureError);
+	}
+
+	renderCustomTextures() {
+		const { appState } = this.props;
+
+		return (
+			<div className="container grid-sm panel">
+				<div className="panel-header">
+					<div className="panel-title h5">TagPro VCR Custom Textures</div>
+				</div>
+				<div className="panel-body">
+					<form className="form-horizontal">
+						{Textures.renderCustomTextureInput("tiles", "Tiles", { imagewidth: 640, imageheight: 440 })}
+						{Textures.renderCustomTextureInput("speedpad", "Speedpad", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("speedpadRed", "Speedpad (Red)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("speedpadBlue", "Speedpad (Blue)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("portal", "Portal", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("splats", "Splats", { imagewidthatleast: 120, imagewidthmultipleof: 120, imageheight: 240 })}
+						{Textures.renderCustomTextureInput("gravityWell", "Gravity Well", { imagewidth: 40, imageheight: 40 })}
+					</form>
+					<p />
+					<p className="text-center">
+						<button className="btn btn-primary" onClick={this.saveCustomTextures.bind(this)}>Save</button>{' '}
+						<button className="btn" onClick={appState.handleCustomTextures}>Cancel</button>
+					</p>
+				</div>
+			</div>
+		);
+	}
+
 	renderInfo() {
 		const { appState } = this.props;
 
@@ -121,7 +162,10 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					<p>See <a href="https://tagpro.koalabeast.com/textures/">game</a> for available texture packs.</p>
 					<div>{Textures.renderTextureSelect()}</div>
 					<p />
-					<button className="btn centered" onClick={appState.handleSettings}>More Settings</button>
+					<p className="text-center">
+						<button className="btn" onClick={appState.handleCustomTextures}>Use Custom Textures</button>{' '}
+						<button className="btn" onClick={appState.handleSettings}>More Settings</button>
+					</p>
 				</div>
 			</div>
 		);
@@ -134,6 +178,22 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 			<button className="btn btn-primary close-modal"
 				onClick={appState.handleDismissModal}>Ok</button>
 		);
+
+		const textureCheckingModal =
+			<Modal
+				title="Please Wait"
+				body="Validating..."
+				stateVar={appState.modal === Modals.TEXTURE_CHECKING}
+			/>;
+
+		const textureBadModal =
+			<Modal
+				title="Invalid Texture"
+				body={appState.customTextureError}
+				stateVar={appState.modal === Modals.TEXTURE_BAD}
+				closeHandler={appState.handleDismissModal}
+				actionButton={okButton}
+			/>;
 
 		const failedModal =
 			<Modal
@@ -158,7 +218,6 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				title="Please Wait"
 				body="Loading..."
 				stateVar={appState.modal === Modals.FETCHING}
-				closeHandler={appState.handleDismissModal}
 			/>;
 
 		const launchModal =
@@ -172,6 +231,8 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 
 		return (
 			<div>
+				{textureCheckingModal}
+				{textureBadModal}
 				{failedModal}
 				{forbiddenModal}
 				{loadingModal}
@@ -331,7 +392,14 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				</header>
 				{this.renderModals()}
 
-				<div id="game-container">{appState.started ? this.renderGame() : appState.settings ? this.renderSettings() : this.renderInfo()}</div>
+				<div id="game-container">
+					{
+						appState.started ? this.renderGame() :
+						appState.settings ? this.renderSettings() :
+						appState.customTextures ? this.renderCustomTextures() :
+						this.renderInfo()
+					}
+				</div>
 			</div>
 		);
 	}

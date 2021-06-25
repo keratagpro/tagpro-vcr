@@ -16,6 +16,8 @@ export enum GameTypes {
 
 export enum Modals {
 	NONE,
+	TEXTURE_CHECKING,
+	TEXTURE_BAD,
 	FAILED,
 	FORBIDDEN,
 	FETCHING,
@@ -33,6 +35,8 @@ export class AppState {
 	packets: Packet[] = undefined;
 	modal = Modals.NONE;
 	settings = false;
+	customTextures = false;
+	customTextureError = '';
 	fetching = false;
 	urlIsValid = undefined;
 	started = false;
@@ -188,6 +192,19 @@ export class AppState {
 
 	handleSettings() {
 		this.settings = !this.settings;
+	}
+
+	handleCustomTextures() {
+		this.customTextures = !this.customTextures;
+	}
+
+	handleCustomTextureChecking() {
+		this.modal = Modals.TEXTURE_CHECKING;
+	}
+
+	handleCustomTextureError(error: string) {
+		this.customTextureError = error;
+		this.modal = Modals.TEXTURE_BAD;
 	}
 
 	handleFileSelect(ev: React.ChangeEvent<HTMLInputElement>) {

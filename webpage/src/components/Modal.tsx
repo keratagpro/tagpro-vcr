@@ -4,7 +4,7 @@ interface IModalProps {
 	title: string,
 	body: string,
 	stateVar: boolean,
-	closeHandler: React.MouseEventHandler<HTMLButtonElement>,
+	closeHandler?: React.MouseEventHandler<HTMLButtonElement>,
 	actionButton?: JSX.Element
 }
 
@@ -12,7 +12,14 @@ export default class Modal extends React.Component<IModalProps> {
 	public render() {
 		const p = this.props;
 
+		let closer: JSX.Element;
 		let footer: JSX.Element;
+
+		if (p.closeHandler) {
+			closer = (
+				<button className="btn btn-clear float-right close-modal" onClick={p.closeHandler}></button>
+			);
+		}
 
 		if (p.actionButton) {
 			footer = (
@@ -27,7 +34,7 @@ export default class Modal extends React.Component<IModalProps> {
 				<div className="modal-overlay"></div>
 				<div className="modal-container">
 					<div className="modal-header">
-						<button className="btn btn-clear float-right close-modal" onClick={p.closeHandler}></button>
+						{closer}
 						<div className="modal-title"><b>{p.title}</b></div>
 					</div>
 					<div className="modal-body">
