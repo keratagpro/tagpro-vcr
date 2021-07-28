@@ -179,6 +179,7 @@ export class AppState {
 		try {
 			switch (mapPacket[2].info.name) {
 				case 'Egg Ball':
+				case 'eggball':
 					return GameTypes.EGGBALL;
 
 				case 'Tower of the TagPro Dragon':
