@@ -12,7 +12,8 @@ const fetchPatterns = [
 export enum GameTypes {
 	NORMAL,
 	EGGBALL,
-	DRAGON_TOWER
+	DRAGON_TOWER,
+	JIMMYS_DUNGEON
 }
 
 export enum Modals {
@@ -184,6 +185,9 @@ export class AppState {
 
 				case 'Tower of the TagPro Dragon':
 					return GameTypes.DRAGON_TOWER;
+
+				case 'Jimmy\'s Dungeon':
+					return GameTypes.JIMMYS_DUNGEON;
 			}
 		} catch {
 			// ignore

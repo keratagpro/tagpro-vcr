@@ -19,7 +19,8 @@ interface IProps {
 const gameFiles = {
 	[GameTypes.NORMAL]: 'game.html',
 	[GameTypes.EGGBALL]: 'game-egg.html',
-	[GameTypes.DRAGON_TOWER]: 'game-dragon-tower.html'
+	[GameTypes.DRAGON_TOWER]: 'game-dragon-tower.html',
+	[GameTypes.JIMMYS_DUNGEON]: 'game-jimmys-dungeon.html'
 }
 
 export const App = observer(class AppClass extends React.Component<IProps> {
