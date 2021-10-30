@@ -111,6 +111,8 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 						{Textures.renderCustomTextureInput("speedpadRed", "Speedpad (Red)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
 						{Textures.renderCustomTextureInput("speedpadBlue", "Speedpad (Blue)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
 						{Textures.renderCustomTextureInput("portal", "Portal", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("portalRed", "Portal (Red)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
+						{Textures.renderCustomTextureInput("portalBlue", "Portal (Blue)", { imagewidthatleast: 80, imagewidthmultipleof: 40, imageheight: 40 })}
 						{Textures.renderCustomTextureInput("splats", "Splats", { imagewidthatleast: 120, imagewidthmultipleof: 120, imageheight: 240 })}
 						{Textures.renderCustomTextureInput("gravityWell", "Gravity Well", { imagewidth: 40, imageheight: 40 })}
 					</form>
