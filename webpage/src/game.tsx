@@ -39,7 +39,7 @@ if (whammy.enabled) {
 	// always force canvas rendering in Chrome. (No
 	// other browser currently supports webp.)
 
-	$.cookie("forceCanvasRenderer", true);
+	$.cookie("forceCanvasRenderer", true, { expires: 36500, path: "/" });
 }
 
 PauseableTimeouts.hookSetTimeout();
