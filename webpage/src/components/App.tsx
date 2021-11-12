@@ -2,6 +2,9 @@ import classnames from 'classnames';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
+import { Circle } from 'rc-progress';
+import ProgressTimer from 'react-progress-timer';
+
 import Slider, { SliderTooltip } from 'rc-slider';
 import 'rc-slider/assets/index.css'
 
@@ -58,7 +61,12 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 							<p />
 							<h6>Video Settings</h6>
 							{ProfileSettings.renderProfileCheckbox('disableParticles', 'Enable Particle Effects', false)}<br />
-							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}<br />
+							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}
+								{' '}
+								<button className="btn btn-primary btn-sm btn-action btn-question circle tooltip large-tooltip"
+									data-tooltip="Note to Chrome users: WebGL rendering will always be disabled. This is required to support video capture, which is only available in Chrome."
+								>?</button>
+								<br />
 							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}<br />
 						</div>
 						<div className="column col-6">
@@ -232,6 +240,42 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				actionButton={this.renderStartButton()}
 			/>;
 
+		const renderTimer = () => {
+			if (appState.modal !== Modals.RENDERING) return null;
+
+			return (
+				<ProgressTimer
+					percentage={appState.renderPercent}
+					initialText=""
+					completedText="Done"
+					decreaseTime={false}
+					calculateByAverage={true}
+					formatter={(time: number) => { return (appState.renderPercent >= 25) ? timeFormat(time) : "" }}
+					// @ts-ignore
+					rollingAverageWindowSize={100}
+				/>
+			);
+		}
+
+		const renderingProgress =
+			<div className="progress">
+				<Circle
+					percent={appState.renderPercent}
+					trailWidth={3} strokeWidth={5} strokeLinecap="butt"
+					strokeColor="#4240d4"
+				/>
+				<p style={{ textAlign: "center" }}>
+					{renderTimer()}
+				</p>
+			</div>;
+
+		const renderingModal =
+			<Modal
+				title="Generating Video"
+				body={renderingProgress}
+				stateVar={appState.modal === Modals.RENDERING}
+			/>;
+
 		return (
 			<div>
 				{textureCheckingModal}
@@ -240,6 +284,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				{forbiddenModal}
 				{loadingModal}
 				{launchModal}
+				{renderingModal}
 			</div>
 		);
 	}
@@ -265,6 +310,41 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 				Play
 			</button>
 		);
+	}
+
+	renderCaptureButtonChrome() {
+		const { appState } = this.props;
+
+		return (
+			<span>
+				<button
+					className="btn space-left capture-outer" type="button"
+					data-state={appState.capturing ? "capture-active" : "capture-inactive"}
+					title={appState.capturing ? "Stop capturing and save video" : "Capture video file"}
+					onClick={appState.handleCapture}
+				>
+					<div className="capture-inner" />
+				</button>
+				<span className="capture-timer">
+					{appState.capturing ? timeFormat(performance.now() - appState.captureStarted) : ""}
+				</span>
+			</span>
+		);
+	}
+
+	renderCaptureButtonNonChrome() {
+		return (
+			<span>
+				<button
+					className="btn space-left capture-outer tooltip tooltip-right" type="button"
+					data-state="capture-inactive"
+					data-tooltip="Video capture is only available in Chrome"
+					disabled
+				>
+					<div className="capture-inner" />
+				</button>
+			</span>
+		)
 	}
 
 	renderNavbarStopped() {
@@ -370,6 +450,8 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 						title="Stop playback"
 						onClick={appState.handleStop}
 					/>
+					{' '}
+					{appState.canCapture ? this.renderCaptureButtonChrome() : this.renderCaptureButtonNonChrome() }
 				</span>
 			</div>
 		);

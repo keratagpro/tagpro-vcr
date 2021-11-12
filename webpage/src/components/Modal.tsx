@@ -1,8 +1,10 @@
+import classnames from 'classnames';
 import React from 'react';
 
 interface IModalProps {
 	title: string,
-	body: string,
+	body: string | JSX.Element,
+	large? : boolean,
 	stateVar: boolean,
 	closeHandler?: React.MouseEventHandler<HTMLButtonElement>,
 	actionButton?: JSX.Element
@@ -29,8 +31,16 @@ export default class Modal extends React.Component<IModalProps> {
 			);
 		}
 
+		const body = typeof (p.body) === 'string' ? <p>{p.body}</p> : p.body;
+
+		const classes = classnames('modal', {
+			'modal-lg': p.large,
+			'modal-sm': !p.large,
+			'active': p.stateVar
+		});
+
 		return (
-			<div className={`modal modal-sm ${p.stateVar ? 'active' : ''}`}>
+			<div className={classes}>
 				<div className="modal-overlay"></div>
 				<div className="modal-container">
 					<div className="modal-header">
@@ -39,7 +49,7 @@ export default class Modal extends React.Component<IModalProps> {
 					</div>
 					<div className="modal-body">
 						<div className="content">
-							<p>{p.body}</p>
+							{body}
 						</div>
 					</div>
 					{footer}

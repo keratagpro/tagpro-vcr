@@ -23,7 +23,8 @@ export enum Modals {
 	FAILED,
 	FORBIDDEN,
 	FETCHING,
-	LAUNCH
+	LAUNCH,
+	RENDERING
 }
 
 export class AppState {
@@ -41,11 +42,15 @@ export class AppState {
 	customTextureError = '';
 	fetching = false;
 	urlIsValid = undefined;
+	canCapture = false;
 	started = false;
 	playing = false;
 	paused = false;
 	seeking = false;
+	capturing = false;
+	captureStarted = 0;
 	finished = false;
+	renderPercent = 0;
 
 	minTS = 0;
 	maxTS = 0;
@@ -65,6 +70,7 @@ export class AppState {
 		channel.on('request-recording', this.handleRequestRecording);
 		channel.on('show-controls', this.handleShowControls);
 		channel.on('time-sync', this.handleTimeSync);
+		channel.on('rendering', this.handleRendering);
 
 		reaction(
 			() => this.selectedFile,
@@ -237,8 +243,9 @@ export class AppState {
 		this.channel.emit('recording', this.packets);
 	}
 
-	handleShowControls() {
+	handleShowControls(data) {
 		this.playing = true;
+		this.canCapture = data.canCapture;
 	}
 
 	handleTimeSync(data) {
@@ -324,6 +331,7 @@ export class AppState {
 	handleStop() {
 		this.started = false;
 		this.playing = false;
+		this.capturing = false;
 	}
 
 	handlePause() {
@@ -367,6 +375,23 @@ export class AppState {
 
 		this.channel.emit('seek', to);
 		this.seeking = false;
+	}
+
+	handleCapture(ev: React.MouseEvent) {
+		if (this.capturing) {
+			const filename = this.recordingName.replace(/\.[^.]+$/, '') + '.webm';
+			this.channel.emit('stop-capture', filename);
+			this.capturing = false;
+		} else {
+			this.channel.emit('start-capture');
+			this.capturing = true;
+			this.captureStarted = performance.now();
+		}
+	}
+
+	handleRendering(data) {
+		this.modal = data.rendering ? Modals.RENDERING : Modals.NONE;
+		this.renderPercent = data.percent ?? 0;
 	}
 
 	parseRecording(data: string) {

@@ -3,19 +3,44 @@ import EventedChannel from './utils/EventedChannel';
 import FakeSocket from './utils/FakeSocket';
 import PauseableTimeouts from './utils/PauseableTimeout';
 
+require('./utils/whammy');
+
 declare var tagpro: TagPro;
 declare var tagproConfig: TagProConfig;
+declare var Whammy: any;
 declare var $: any;
+
+const viewport = document.querySelector('#viewport') as HTMLCanvasElement;
 
 const save = {
 	performanceInfo: null,
 	seeking: false,
+	render: null,
 	sound: null as boolean,
 	time: null as number,
 	uiTimer: null,
 	worldUpdate: null,
 	map: null as any[][]
 };
+
+const whammy = {
+	enabled: viewport.toDataURL('image/webp').substr(0, 15) === 'data:image/webp',
+	minFrameDuration: 30,
+	capturing: false,
+	encoder: null,
+	lastFrame: null as number,
+	docHTML: null as string,
+	observer: null as MutationObserver
+};
+
+if (whammy.enabled) {
+	// Canvas rendering is required to capture video.
+	// This is a bit of a hack but we're just going to
+	// always force canvas rendering in Chrome. (No
+	// other browser currently supports webp.)
+
+	$.cookie("forceCanvasRenderer", true);
+}
 
 PauseableTimeouts.hookSetTimeout();
 
@@ -143,7 +168,7 @@ const io = {
 			player.load(data);
 			player.play();
 
-			channel.emit('show-controls');
+			channel.emit('show-controls', { canCapture: whammy.enabled });
 
 			const timer = tagpro.ui.timer;
 			tagpro.ui.timer = (...args) => {
@@ -248,6 +273,100 @@ const io = {
 
 		channel.on('reload', () => {
 			location.reload();
+		});
+
+		channel.on('start-capture', () => {
+			// The Whammy recorder works by capturing frames and assembling
+			// them into a webm video. To work correctly, each frame must be
+			// captured in the same event in which it's drawn. We'll hook the
+			// render function which is already called every tick, and use it
+			// to capture a frame when necessary.
+
+			const doc = document.documentElement;
+
+			const domW = doc.offsetWidth;
+			const domH = doc.offsetHeight;
+			const domX = viewport.offsetLeft;
+			const domY = viewport.offsetTop;
+
+			whammy.encoder = new Whammy.Video(undefined, 0.92, domW, domH, domX, domY);
+			whammy.lastFrame = null;
+			whammy.capturing = true;
+
+			whammy.docHTML = doc.outerHTML;
+			whammy.observer = new MutationObserver(mutations => {
+				whammy.docHTML = doc.outerHTML;
+			});
+
+			whammy.observer.observe(document.documentElement, {
+				subtree: true,
+				childList: true,
+				attributes: true,
+				characterData: true
+			});
+
+			// Remove all script nodes from the document, to prevent
+			// spurious error messages from rasterizeHTML during encoding.
+			// All of the scripts are loaded by now anyway.
+
+			$('script').remove();
+
+			if (!save.render) {
+				save.render = tagpro.renderer.render;
+
+				tagpro.renderer.render = (...args) => {
+					save.render(...args);
+
+					if (whammy.capturing) {
+						const now = performance.now();
+						const elapsed = whammy.lastFrame ? (now - whammy.lastFrame) : whammy.minFrameDuration;
+
+						if (elapsed >= whammy.minFrameDuration) {
+							whammy.encoder.add(viewport, elapsed, whammy.docHTML);
+							whammy.lastFrame = now;
+						}
+					}
+				};
+			}
+
+			if (paused) {
+				setTimeout(unpause, 1);
+			}
+		});
+
+		channel.on('stop-capture', filename => {
+			// The Whammy encoder now needs to render each frame and
+			// assemble the final video, so we'll show a progress meter.
+			// Errors can sometimes happen during rendering but are
+			// very difficult to catch because Whammy does a lot of
+			// asynchronous work in setTimeout.
+
+			whammy.capturing = false;
+
+			whammy.observer.disconnect();
+			whammy.observer = null;
+
+			channel.emit('rendering', { rendering: true, percent: 0 });
+			if (!paused) {
+				pause();
+			}
+
+			const callback = blob => {
+				const url = window.URL.createObjectURL(blob);
+
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = filename;
+				a.click();
+
+				window.URL.revokeObjectURL(url);
+
+				channel.emit('rendering', { rendering: false });
+				whammy.encoder = null;
+			};
+
+			const progressCallback = pct => channel.emit('rendering', { rendering: true, percent: pct * 100 });
+			whammy.encoder.compile(false, callback, progressCallback);
 		});
 
 		return socket;
