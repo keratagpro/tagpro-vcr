@@ -10,6 +10,6 @@
 // @match         *://*.koalabeast.com/*
 // @match         *://*.jukejuice.com/*
 // @match         *://*.newcompte.fr/*
-// @require       https://unpkg.com/idb/build/iife/index-min.js
-// @require       https://unpkg.com/penpal/dist/penpal.min.js
+// @require       https://unpkg.com/idb@7/build/umd.js
+// @require       https://unpkg.com/penpal@6/dist/penpal.min.js
 // ==/UserScript==

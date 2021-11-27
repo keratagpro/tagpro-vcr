@@ -62,6 +62,11 @@ export default class VcrWindow {
 				Previous version: ${previous}
 			</p>
 
+			<p><u>Version 1.1.1</u></p>
+			<ul class="bullet-list">
+				<li>Update dependencies due to upstream library changes.</li>
+			</ul>
+
 			<p><u>Version 1.1.0</u></p>
 			<ul class="bullet-list">
 				<li>Add the ability to launch replays directly from the browser.</li>
