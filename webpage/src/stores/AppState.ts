@@ -1,4 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
+import pako from 'pako';
 import React from 'react';
 
 import EventedChannel from '../utils/EventedChannel';
@@ -90,7 +91,7 @@ export class AppState {
 					});
 				});
 
-				reader.readAsText(file);
+				reader.readAsBinaryString(file);
 			}
 		);
 
@@ -304,7 +305,14 @@ export class AppState {
 		let failed = false;
 
 		try {
-			this.parseRecording(this.recording);
+			let recording = this.recording;
+
+			if (this.recordingName.endsWith('.gz')) {
+				const charData = recording.split('').map(c => c.charCodeAt(0));
+				recording = pako.ungzip(new Uint8Array(charData), { to: 'string' });
+			}
+
+			this.parseRecording(recording);
 		} catch {
 			failed = true;
 		}
@@ -403,13 +411,15 @@ export class AppState {
 		const endIndex = packets.findIndex(p => p[1] === 'end');
 		const endPacket = packets[endIndex] || packets[packets.length-1];
 		const duration = endPacket[0];
+		const isSpectator = !!packets.findIndex(p => p[1] === 'spectator');
 
 		const connect = packets.find(p => p[1] === 'connect');
 		if (connect) {
 			connect[2] ||= {};
 			connect[2].duration = duration;
+			connect[2].isSpectator = isSpectator;
 		} else {
-			packets.splice(1, 0, [0, 'connect', { 'duration': duration }]);
+			packets.splice(1, 0, [0, 'connect', { 'duration': duration, 'isSpectator': isSpectator }]);
 		}
 
 		this.firstTimePacket = packets.find(p => p[1] === 'time');

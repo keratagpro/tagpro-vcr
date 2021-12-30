@@ -366,7 +366,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 					<input className="form-input" type="text" value={appState.recordingURL} onChange={appState.handleUrlChange} placeholder="Fetch from URL (http://...)" />
 					{appState.recordingURL && <i className={fetchClasses} />}
 				</div>
-				<input id="file" type="file" accept=".ndjson,.jsonl" onChange={appState.handleFileSelect} />{' '}
+				<input id="file" type="file" accept=".ndjson,.ndjson.gz,.jsonl,.jsonl.gz" onChange={appState.handleFileSelect} />{' '}
 
 				{this.renderStartButton()}
 			</div>
