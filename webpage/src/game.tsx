@@ -1,3 +1,4 @@
+import { detect } from 'detect-browser';
 import BackgroundPlayer from './utils/BackgroundPlayer';
 import EventedChannel from './utils/EventedChannel';
 import FakeSocket from './utils/FakeSocket';
@@ -23,8 +24,16 @@ const save = {
 	map: null as any[][]
 };
 
+const browser = detect();
+const isChrome = browser && browser.name === "chrome";
+const hasWebp = viewport.toDataURL("image/webp").substring(0, 15) === "data:image/webp";
+const forceCanvas = $.cookie("forceCanvasRenderer") === "true";
+
+const couldCapture = isChrome && hasWebp;
+const canCapture = couldCapture && forceCanvas;
+
 const whammy = {
-	enabled: viewport.toDataURL('image/webp').substr(0, 15) === 'data:image/webp',
+	enabled: canCapture,
 	minFrameDuration: 30,
 	capturing: false,
 	encoder: null,
@@ -32,15 +41,6 @@ const whammy = {
 	docHTML: null as string,
 	observer: null as MutationObserver
 };
-
-if (whammy.enabled) {
-	// Canvas rendering is required to capture video.
-	// This is a bit of a hack but we're just going to
-	// always force canvas rendering in Chrome. (No
-	// other browser currently supports webp.)
-
-	$.cookie("forceCanvasRenderer", true, { expires: 36500, path: "/" });
-}
 
 PauseableTimeouts.hookSetTimeout();
 
@@ -173,7 +173,7 @@ const io = {
 			player.load(data);
 			player.play();
 
-			channel.emit('show-controls', { canCapture: whammy.enabled });
+			channel.emit('show-controls', { canCapture, couldCapture });
 
 			const timer = tagpro.ui.timer;
 			tagpro.ui.timer = (...args) => {

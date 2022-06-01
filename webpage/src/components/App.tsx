@@ -65,7 +65,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 							{ProfileSettings.renderProfileCheckbox('forceCanvasRenderer', 'Enable WebGL Rendering', false)}
 								{' '}
 								<button className="btn btn-primary btn-sm btn-action btn-question circle tooltip large-tooltip"
-									data-tooltip="Note to Chrome users: WebGL rendering will always be disabled. This is required to support video capture, which is only available in Chrome."
+									data-tooltip="Note to Chrome users: To enable video capture, turn this checkbox off. Playback performance might be worse."
 								>?</button>
 								<br />
 							{ProfileSettings.renderProfileCheckbox('disableViewportScaling', 'Enable Viewport Scaling', true)}<br />
@@ -168,6 +168,11 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 							The game is running in "spectator"-mode, so you can press <code>C</code> to center the view,
 							<code>+</code>/<code>-</code> to zoom in/out etc.
 							(see <a href="https://www.reddit.com/r/TagPro/wiki/gameplay#wiki_spectator">wiki</a>).
+						</li>
+						<li>
+							Video capture (experimental!) is available only in Chrome, and only when WebGL Rendering
+							is disabled. To allow video capture in Chrome, click on More Settings and turn off
+							Video Settings &gt; Enable WebGL Rendering. Playback performance might be worse.
 						</li>
 					</ul>
 					<h6>Texture Pack Selection</h6>
@@ -313,7 +318,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		);
 	}
 
-	renderCaptureButtonChrome() {
+	renderCaptureButtonEnabled() {
 		const { appState } = this.props;
 
 		return (
@@ -333,13 +338,17 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 		);
 	}
 
-	renderCaptureButtonNonChrome() {
+	renderCaptureButtonDisabled(couldCapture: boolean) {
+		const tooltip = couldCapture ?
+			"Video capture is disabled" :
+			"Video capture is only available in Chrome";
+
 		return (
 			<span>
 				<button
 					className="btn space-left capture-outer tooltip tooltip-right" type="button"
 					data-state="capture-inactive"
-					data-tooltip="Video capture is only available in Chrome"
+					data-tooltip={tooltip}
 					disabled
 				>
 					<div className="capture-inner" />
@@ -452,7 +461,7 @@ export const App = observer(class AppClass extends React.Component<IProps> {
 						onClick={appState.handleStop}
 					/>
 					{' '}
-					{appState.canCapture ? this.renderCaptureButtonChrome() : this.renderCaptureButtonNonChrome() }
+					{appState.canCapture ? this.renderCaptureButtonEnabled() : this.renderCaptureButtonDisabled(appState.couldCapture) }
 				</span>
 			</div>
 		);

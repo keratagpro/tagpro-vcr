@@ -45,6 +45,7 @@ export class AppState {
 	fetching = false;
 	urlIsValid = undefined;
 	canCapture = false;
+	couldCapture = false;
 	started = false;
 	playing = false;
 	paused = false;
@@ -251,6 +252,7 @@ export class AppState {
 	handleShowControls(data) {
 		this.playing = true;
 		this.canCapture = data.canCapture;
+		this.couldCapture = data.couldCapture;
 	}
 
 	handleTimeSync(data) {
