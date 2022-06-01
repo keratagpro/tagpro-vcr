@@ -14,7 +14,8 @@ export enum GameTypes {
 	NORMAL,
 	EGGBALL,
 	DRAGON_TOWER,
-	JIMMYS_DUNGEON
+	JIMMYS_DUNGEON,
+	PIRATES
 }
 
 export enum Modals {
@@ -195,6 +196,9 @@ export class AppState {
 
 				case 'Jimmy\'s Dungeon':
 					return GameTypes.JIMMYS_DUNGEON;
+
+				case 'Pirates of the Caribballan: The Legend of Juke Sparrowkeys':
+					return GameTypes.PIRATES;
 			}
 		} catch {
 			// ignore

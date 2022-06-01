@@ -260,7 +260,8 @@ const gameFiles = {
     [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].NORMAL]: 'game.html',
     [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].EGGBALL]: 'game-egg.html',
     [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].DRAGON_TOWER]: 'game-dragon-tower.html',
-    [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].JIMMYS_DUNGEON]: 'game-jimmys-dungeon.html'
+    [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].JIMMYS_DUNGEON]: 'game-jimmys-dungeon.html',
+    [_stores_AppState__WEBPACK_IMPORTED_MODULE_7__["GameTypes"].PIRATES]: 'game-pirates.html'
 };
 const App = Object(mobx_react__WEBPACK_IMPORTED_MODULE_1__["observer"])(class AppClass extends react__WEBPACK_IMPORTED_MODULE_2__["Component"] {
     renderGame() {
@@ -642,6 +643,7 @@ var GameTypes;
     GameTypes[GameTypes["EGGBALL"] = 1] = "EGGBALL";
     GameTypes[GameTypes["DRAGON_TOWER"] = 2] = "DRAGON_TOWER";
     GameTypes[GameTypes["JIMMYS_DUNGEON"] = 3] = "JIMMYS_DUNGEON";
+    GameTypes[GameTypes["PIRATES"] = 4] = "PIRATES";
 })(GameTypes || (GameTypes = {}));
 var Modals;
 (function (Modals) {
@@ -786,6 +788,8 @@ class AppState {
                     return GameTypes.DRAGON_TOWER;
                 case 'Jimmy\'s Dungeon':
                     return GameTypes.JIMMYS_DUNGEON;
+                case 'Pirates of the Caribballan: The Legend of Juke Sparrowkeys':
+                    return GameTypes.PIRATES;
             }
         }
         catch (_a) {
