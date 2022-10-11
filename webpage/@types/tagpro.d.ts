@@ -48,6 +48,7 @@ declare class TagPro {
 	chat: TagPro.Chat;
 	fps: number;
 	gameEndsAt: Date;
+	overtimeStartedAt: Date;
 	group: TagPro.Group;
 	kick: TagPro.Kick;
 	musicPlayer: TagPro.MusicPlayer;
@@ -78,6 +79,7 @@ declare class TagPro {
 	joinGame(): void;
 	playSound(name): void;
 	sendKeyPress(direction: string, released: boolean): void;
+	sendPingStatistics(): void;
 	showOptions(): void;
 	stopSound(sound: string): void;
 	updateSounds(): void;
@@ -241,6 +243,12 @@ declare namespace TagPro {
 		y: number;
 	}
 
+	interface MapUpdate {
+		x: number;
+		y: number;
+		v: any;
+	}
+
 	interface Settings {
 		stats: boolean;
 		ui: {
@@ -253,7 +261,7 @@ declare namespace TagPro {
 			spectatorInfo: boolean;
 			systemChat: boolean;
 			teamChat: boolean;
-			teamNames: boolean;
+			teamNames: string;
 		};
 	}
 
@@ -293,10 +301,16 @@ declare namespace TagPro {
 		teleportOther;
 	}
 
-	enum State {
+	const enum State {
 		Active = 1,
 		Ended = 2,
-		NotStarted = 3
+		NotStarted = 3,
+		Overtime = 5
+	}
+
+	const enum Teams {
+		Red = 1,
+		Blue = 2
 	}
 
 	interface Tiles extends Array<any> {
@@ -328,7 +342,7 @@ declare namespace TagPro {
 
 		alignUI(): void;
 		largeAlert(): void;
-		performanceInfo(): void;
+		performanceInfo(...args): void;
 		resize(width: number, height: number): void;
 		scores(): void;
 		spectatorInfo(): void;
@@ -456,7 +470,7 @@ declare namespace TagPro {
 		/**
 		 * Layer creation functions.
 		 */
-		createMidground(): void;
+		createMidground(container): void;
 
 		/**
 		 * Creates the overlay DisplayObjectContainer and appends itself to the specified container.
@@ -634,7 +648,7 @@ declare namespace TagPro {
 
 		updateTagpro(player: Player): void;
 
-		updatedynamicTile(update: Position): void;
+		updateDynamicTile(update: MapUpdate): void;
 
 		veryPrettyText(text, color): PIXI.Sprite;
 	}

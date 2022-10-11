@@ -3,61 +3,60 @@ const now = performance.now.bind(performance);
 // NOTE: Minimum interval in browsers is 4ms.
 const DEFAULT_INTERVAL = 4;
 
+export type Packet = [
+	number,
+	string,
+	any
+];
+
 export default class PacketDataPlayer {
 	loopId;
 	currentIndex: number;
 	currentTime = 0;
-	scheduledPacket: [number, string, any];
+	scheduledPacket: Packet;
 	paused = false;
 	startedAt: number;
-	duration: number;
 
 	constructor(
-		public packets: Array<[number, string, any]>,
+		public packets: Packet[],
 		public callback: (ts: number, type: string, data?: any) => void,
+		public seekCallback: (to: number) => void = () => {},
 		public doneCallback = () => {}
 	) {
 		this.currentIndex = 0;
-		this.duration = packets[packets.length - 1][0];
 	}
 
 	seek(to: number) {
-		this.startedAt = now() - to;
-		this.currentIndex = this.packets.findIndex(([ts]) => ts > to);
-		this.scheduledPacket = this.packets[this.currentIndex];
-	}
+		const event = { ts: 0, time: 0, state: 0 };
 
-	advance(to: number) {
-		const index = this.packets.findIndex(([ts]) => ts < to);
+		for (let index = 0; index < this.packets.length; index++) {
+			const packet = this.packets[index];
+			const nextPacket = this.packets[index + 1];
 
-		while (this.scheduledPacket) {
-			const packet = this.packets[this.currentIndex++];
-			this.scheduledPacket = packet;
-
-			if (packet[0] > to) {
-				break;
+			if (packet[1] === "time") {
+				event.ts = packet[0];
+				event.time = packet[2].time;
+				event.state = packet[2].state;
 			}
 
 			this.callback(packet[0], packet[1], packet[2]);
-		}
-	}
 
-	fastForward(to: number, from = 0) {
-		let index = to < from ? 0 : this.packets.findIndex(([ts]) => ts >= from && ts < to);
-		let packet = this.packets[index];
+			if (nextPacket && nextPacket[0] > to) {
+				const offset = packet[0] - event.ts;
+				const newtime = (event.state === TagPro.State.Overtime) ? event.time + offset : event.time - offset;
 
-		while (packet) {
-			packet = this.packets[++index];
+				this.callback(packet[0], "time", { time: newtime, state: event.state });
 
-			this.currentTime = packet[0];
+				this.currentTime = packet[0];
+				this.startedAt = now() - this.currentTime;
+				this.currentIndex = index + 1;
+				this.scheduledPacket = nextPacket;
 
-			if (packet[0] > to) {
-				this.scheduledPacket = packet;
 				break;
 			}
-
-			this.callback(packet[0], packet[1], packet[2]);
 		}
+
+		this.seekCallback(this.currentTime);
 	}
 
 	play(interval = DEFAULT_INTERVAL) {
@@ -79,6 +78,10 @@ export default class PacketDataPlayer {
 	}
 
 	_loop = () => {
+		if (this.paused) {
+			return;
+		}
+
 		this.currentTime = now() - this.startedAt;
 
 		const packet = this.scheduledPacket;

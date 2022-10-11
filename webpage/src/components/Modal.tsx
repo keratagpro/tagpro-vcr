@@ -1,30 +1,60 @@
-import * as classnames from 'classnames';
-import * as React from 'react';
+import classnames from 'classnames';
+import React from 'react';
 
-interface IProps {
-	hidden?: boolean;
-	title?: string;
-	onClose: () => void;
+interface IModalProps {
+	title: string,
+	body: string | JSX.Element,
+	large? : boolean,
+	stateVar: boolean,
+	closeHandler?: React.MouseEventHandler<HTMLButtonElement>,
+	actionButton?: JSX.Element
 }
 
-export const Modal: React.SFC<IProps> = function(props) {
-	return (
-		<div className={classnames('modal', { active: !props.hidden })}>
-			<a href="#close" className="modal-overlay" onClick={props.onClose} />
-			<div className="modal-container">
-				<div className="modal-header">
-					<a href="#close" className="btn btn-clear float-right" onClick={props.onClose} />
-					<div className="modal-title h5">{props.title}</div>
-				</div>
-				<div className="modal-body">
-					<div className="content">{props.children}</div>
-				</div>
+export default class Modal extends React.Component<IModalProps> {
+	public render() {
+		const p = this.props;
+
+		let closer: JSX.Element;
+		let footer: JSX.Element;
+
+		if (p.closeHandler) {
+			closer = (
+				<button className="btn btn-clear float-right close-modal" onClick={p.closeHandler}></button>
+			);
+		}
+
+		if (p.actionButton) {
+			footer = (
 				<div className="modal-footer">
-					<button className="btn" onClick={props.onClose}>
-						Close
-					</button>
+					{p.actionButton}
+				</div>
+			);
+		}
+
+		const body = typeof (p.body) === 'string' ? <p>{p.body}</p> : p.body;
+
+		const classes = classnames('modal', {
+			'modal-lg': p.large,
+			'modal-sm': !p.large,
+			'active': p.stateVar
+		});
+
+		return (
+			<div className={classes}>
+				<div className="modal-overlay"></div>
+				<div className="modal-container">
+					<div className="modal-header">
+						{closer}
+						<div className="modal-title"><b>{p.title}</b></div>
+					</div>
+					<div className="modal-body">
+						<div className="content">
+							{body}
+						</div>
+					</div>
+					{footer}
 				</div>
 			</div>
-		</div>
-	);
-};
+		);
+	}
+}
